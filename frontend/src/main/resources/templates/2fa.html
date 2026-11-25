@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificación en dos pasos - EZUR</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+  </head>
+  <body class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div
+      class="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-sm p-8"
+    >
+      <p
+        class="text-xs uppercase tracking-widest text-indigo-600 font-semibold mb-2"
+      >
+        Seguridad
+      </p>
+      <h1 class="text-2xl font-serif text-gray-900 mb-6">
+        Verificación en dos pasos
+      </h1>
+
+      <div th:if="${qr != null}" class="mb-6">
+        <p class="text-sm text-gray-600 mb-4">
+          Escaneá este código con Google Authenticator (o Authy) desde tu
+          celular. Después escribí abajo el código de 6 dígitos que te muestra
+          la app.
+        </p>
+        <img
+          th:src="${qr}"
+          alt="Código QR para configurar la verificación en dos pasos"
+          class="mx-auto w-48 h-48 border border-gray-200 rounded-lg"
+        />
+      </div>
+
+      <p th:if="${qr == null}" class="text-sm text-gray-600 mb-6">
+        Abrí la app de autenticación en tu celular y escribí el código de 6
+        dígitos de EZUR Admin.
+      </p>
+
+      <div
+        th:if="${param.error}"
+        class="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3"
+      >
+        El código no es correcto o ya venció. Probá con el código que se muestra
+        ahora.
+      </div>
+
+      <form th:action="@{/2fa}" method="post" class="space-y-4">
+        <input
+          type="text"
+          name="codigo"
+          required
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          pattern="[0-9]{6}"
+          maxlength="6"
+          placeholder="000000"
+          autofocus
+          class="w-full text-center text-2xl tracking-[0.5em] border border-gray-300 rounded-lg py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+
+        <label
+          class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+        >
+          <input
+            type="checkbox"
+            name="recordar"
+            class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          />
+          Recordar este dispositivo durante 30 días
+        </label>
+        <button
+          type="submit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg py-3 transition-colors"
+        >
+          Verificar
+        </button>
+      </form>
+
+      <form th:action="@{/logout}" method="post" class="mt-6 text-center">
+        <button
+          type="submit"
+          class="text-sm text-gray-500 hover:text-gray-700 underline"
+        >
+          Cancelar y salir
+        </button>
+      </form>
+    </div>
+
+    <script th:src="@{/js/evitar-doble-envio.js}" defer></script>
+  </body>
+</html>

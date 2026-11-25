@@ -1,0 +1,48 @@
+# Ejemplo para levantar las tres capas juntas:  docker compose up --build
+# Las variables se leen del archivo .env de esta carpeta (ver .env.example).
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ezur_db
+      POSTGRES_USER: ezur
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?define DB_PASSWORD en .env}
+    volumes:
+      - ezur_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ezur -d ezur_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Capa 2: API REST (Spring Boot). Solo la alcanza el frontend, por eso no publica ningún puerto.
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/ezur_db
+      DB_USERNAME: ezur
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRETO: ${JWT_SECRETO:?define JWT_SECRETO en .env (mínimo 32 caracteres)}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_DESTINO: ${MAIL_DESTINO:-}
+      APP_BASE_URL: http://localhost:8080
+    expose:
+      - "8081"
+
+  # Capa 1: sitio público (Spring Boot + Thymeleaf) que consume la API
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    environment:
+      API_URL: http://backend:8081
+      APP_BASE_URL: http://localhost:8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  ezur_pgdata:

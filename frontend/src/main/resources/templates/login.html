@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar sesión - Ezur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Public+Sans:ital,wght@0,400..700;1,400..600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <style>
+      :root {
+        --ink: #0d2240;
+        --ink-2: #51617d;
+        --paper: #ffffff;
+        --line: #c3cfe2;
+        --azul: #1a67d1;
+      }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Public Sans", system-ui, sans-serif;
+      }
+      .serif {
+        font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+      }
+      h1.serif em,
+      h2.serif em {
+        font-style: normal;
+        color: var(--azul);
+      }
+      ::selection { background: var(--azul); color: #fff; }
+      :focus-visible { outline: 2px solid var(--azul); outline-offset: 3px; border-radius: 6px; }
+      .campo {
+        width: 100%;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 0.6rem;
+        padding: 0.7rem 0.85rem;
+        font-size: 0.95rem;
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+      .campo:focus {
+        outline: none;
+        border-color: var(--azul);
+        box-shadow: 0 0 0 3px rgba(31, 111, 229, 0.18);
+      }
+      .entra { animation: entra 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+      .entra-2 { animation-delay: 0.08s; }
+      @keyframes entra { from { opacity: 0; transform: translateY(10px); } }
+      @media (prefers-reduced-motion: reduce) { .entra { animation: none; } }
+    </style>
+  </head>
+  <body class="antialiased">
+    <div class="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
+      <!-- Foto y promesa -->
+      <aside class="relative hidden overflow-hidden lg:block" style="background: var(--ink)">
+        <img
+          src="/img/galeria/mud2.png"
+          alt="Interior de un camión con muebles protegidos"
+          class="absolute inset-0 h-full w-full object-cover"
+          style="object-position: 50% 55%"
+        />
+        <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(12, 26, 51, 0.95) 8%, rgba(12, 26, 51, 0.35) 55%, rgba(12, 26, 51, 0.1))"></div>
+        <div class="relative flex h-full flex-col justify-between p-10 xl:p-14">
+          <a href="/" class="flex w-fit items-center gap-2 text-white" aria-label="Volver al sitio de Ezur">
+            <img src="/img/logo.jpg" alt="" class="h-9 w-9 rounded" />
+            <span class="serif text-xl">EZUR</span>
+          </a>
+          <div class="max-w-md text-white">
+            <p class="serif text-4xl leading-[1.08] xl:text-5xl">
+              Tu mudanza, <em class="text-[#8fbfff]">paso a paso.</em>
+            </p>
+            <ul class="mt-6 space-y-3 text-[0.95rem] text-white/85">
+              <li class="flex gap-3">
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-[#8fbfff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                Mira en qué punto está cada solicitud.
+              </li>
+              <li class="flex gap-3">
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-[#8fbfff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                Pide presupuestos sin repetir tus datos.
+              </li>
+              <li class="flex gap-3">
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-[#8fbfff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                Habla con el equipo cuando lo necesites.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Formulario -->
+      <main class="flex flex-col px-6 py-8 sm:px-12">
+        <div class="flex items-center justify-between lg:justify-end">
+          <a href="/" class="flex items-center gap-2 lg:hidden" aria-label="Volver al sitio de Ezur">
+            <img src="/img/logo.jpg" alt="" class="h-8 w-8 rounded" />
+            <span class="serif text-lg">EZUR</span>
+          </a>
+          <a href="/" class="text-sm text-[var(--ink-2)] hover:text-[var(--ink)]">← Volver al sitio</a>
+        </div>
+
+        <div class="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-10">
+          <h1 class="entra serif text-4xl leading-tight sm:text-5xl">
+            Entra a tu <em>espacio</em>
+          </h1>
+          <p class="entra entra-2 mt-3 text-[var(--ink-2)]">Usa el usuario y la clave de tu cuenta de cliente.</p>
+
+          <div
+            th:if="${registrado}"
+            role="status"
+            class="mt-6 rounded-lg px-4 py-3 text-sm"
+            style="background: #daf3e6; color: #14633f"
+          >
+            Cuenta creada. Un administrador debe activarla antes de que puedas ingresar.
+          </div>
+          <div
+            th:if="${param.error}"
+            role="alert"
+            class="mt-6 rounded-lg px-4 py-3 text-sm"
+            style="background: #fbe3e5; color: #8f2330"
+          >
+            Usuario o clave incorrectos.
+          </div>
+          <div
+            th:if="${param.inactivo}"
+            role="alert"
+            class="mt-6 rounded-lg px-4 py-3 text-sm"
+            style="background: #fff1d6; color: #7a4f00"
+          >
+            Tu cuenta aún no está activa (pendiente o anulada). Contacta a Ezur.
+          </div>
+          <div
+            th:if="${param.perfil}"
+            role="alert"
+            class="mt-6 rounded-lg px-4 py-3 text-sm"
+            style="background: #fff1d6; color: #7a4f00"
+          >
+            Esta cuenta no es de cliente. Usa el acceso que corresponde a tu perfil.
+          </div>
+
+          <form th:action="@{/login}" method="post" class="entra entra-2 mt-7 space-y-5">
+            <input type="hidden" name="ambito" value="cliente" />
+            <div>
+              <label for="username" class="mb-1.5 block text-sm font-medium">Usuario</label>
+              <input type="text" name="username" id="username" autocomplete="username" required autofocus class="campo" />
+            </div>
+            <div>
+              <label for="password" class="mb-1.5 block text-sm font-medium">Clave</label>
+              <input type="password" name="password" id="password" autocomplete="current-password" required class="campo" />
+            </div>
+            <button
+              type="submit"
+              class="w-full rounded-lg px-4 py-3 text-sm font-semibold text-white transition hover:brightness-90"
+              style="background: var(--azul)"
+            >
+              Entrar
+            </button>
+          </form>
+
+          <p class="mt-8 text-sm text-[var(--ink-2)]">
+            ¿Aún no tienes cuenta?
+            <a th:href="@{/registro}" class="font-semibold text-[var(--azul)] hover:underline">Crear una cuenta</a>
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <script th:src="@{/js/evitar-doble-envio.js}" defer></script>
+  </body>
+</html>

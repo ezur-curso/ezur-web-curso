@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Mi espacio - Ezur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Public+Sans:ital,wght@0,400..700;1,400..600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <style>
+      :root {
+        --ink: #0d2240;
+        --ink-2: #51617d;
+        --paper: #f3f7fd;
+        --line: #dde5f1;
+        --azul: #1a67d1;
+        --azul-suave: #e8f1fd;
+        --ambar: #8a5a00;
+        --ambar-fondo: #fff1d6;
+        --verde: #14633f;
+        --verde-fondo: #daf3e6;
+        --rojo: #8f2330;
+        --rojo-fondo: #fbe3e5;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 6.5rem;
+      }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Public Sans", system-ui, sans-serif;
+      }
+      ::selection {
+        background: var(--azul);
+        color: #fff;
+      }
+      :focus-visible {
+        outline: 2px solid var(--azul);
+        outline-offset: 3px;
+        border-radius: 6px;
+      }
+      .serif {
+        font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+      }
+      h1.serif em,
+      h2.serif em {
+        font-style: normal;
+        color: var(--azul);
+      }
+      .tabular {
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Estado de cada solicitud */
+      .estado {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .estado::before {
+        content: "";
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      .estado-pendiente { background: var(--ambar-fondo); color: var(--ambar); }
+      .estado-contactado { background: var(--azul-suave); color: #134aa6; }
+      .estado-confirmado { background: var(--verde-fondo); color: var(--verde); }
+      .estado-cancelado { background: var(--rojo-fondo); color: var(--rojo); }
+
+      /* La ruta: tres paradas y una furgoneta que se queda en la actual */
+      .ruta {
+        --paso: 0;
+        position: relative;
+        height: 3rem;
+        margin: 0 1.25rem;
+      }
+      .ruta-via,
+      .ruta-recorrido {
+        position: absolute;
+        top: 1.5rem;
+        left: 0;
+        height: 0;
+        border-top: 2px dashed rgba(255, 255, 255, 0.35);
+        width: 100%;
+      }
+      .ruta-recorrido {
+        border-top: 3px solid #5aa2ff;
+        width: calc(var(--paso) * 50%);
+        animation: recorre 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      .ruta-parada {
+        position: absolute;
+        top: 1.5rem;
+        width: 0.9rem;
+        height: 0.9rem;
+        margin: -0.45rem 0 0 -0.45rem;
+        border-radius: 50%;
+        background: #0c1a33;
+        border: 2px solid rgba(255, 255, 255, 0.45);
+      }
+      .ruta-parada.hecha {
+        background: #5aa2ff;
+        border-color: #5aa2ff;
+      }
+      .ruta-furgo {
+        position: absolute;
+        top: 0;
+        left: calc(var(--paso) * 50%);
+        width: 3rem;
+        margin-left: -1.5rem;
+        color: #fff;
+        animation: viaja 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      @keyframes viaja {
+        from { left: 0; }
+      }
+      @keyframes recorre {
+        from { width: 0; }
+      }
+
+      /* Versión clara de la misma ruta (estado vacío) */
+      .ruta-clara .ruta-via { border-top-color: var(--line); }
+      .ruta-clara .ruta-parada { background: #fff; border-color: #b5c3dc; }
+
+      details > summary { list-style: none; cursor: pointer; }
+      details > summary::-webkit-details-marker { display: none; }
+      details[open] .giro { transform: rotate(45deg); }
+      .giro { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .ruta-furgo, .ruta-recorrido { animation: none; }
+        .giro { transition: none; }
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen antialiased">
+    <!-- Barra propia del espacio de cliente -->
+    <header class="sticky top-0 z-40 border-b bg-white/90 backdrop-blur" style="border-color: var(--line)">
+      <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
+        <a href="/" class="flex items-center gap-2" aria-label="Volver al sitio de Ezur">
+          <img src="/img/logo.jpg" alt="" class="h-8 w-8 rounded" />
+          <span class="serif text-lg">EZUR</span>
+        </a>
+
+        <nav class="hidden items-center gap-7 text-sm md:flex" aria-label="Secciones">
+          <a href="#mudanzas" class="font-medium hover:text-[var(--azul)]">Mis mudanzas</a>
+          <a href="#ezur" class="font-medium hover:text-[var(--azul)]">Ezur y tú</a>
+          <a href="#cuenta" class="font-medium hover:text-[var(--azul)]">Mi cuenta</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <a
+            th:href="@{/cotizar}"
+            class="rounded-lg bg-[var(--ink)] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1b2f55]"
+            >Nueva solicitud</a
+          >
+          <form th:action="@{/logout}" method="post">
+            <button
+              type="submit"
+              class="rounded-lg px-3 py-2 text-sm font-medium text-[var(--ink-2)] transition hover:bg-[var(--azul-suave)] hover:text-[var(--ink)]"
+            >
+              Salir
+            </button>
+          </form>
+        </div>
+      </div>
+      <nav
+        class="flex gap-6 overflow-x-auto border-t px-5 py-2 text-sm md:hidden"
+        style="border-color: var(--line)"
+        aria-label="Secciones"
+      >
+        <a href="#mudanzas" class="shrink-0 font-medium">Mis mudanzas</a>
+        <a href="#ezur" class="shrink-0 font-medium">Ezur y tú</a>
+        <a href="#cuenta" class="shrink-0 font-medium">Mi cuenta</a>
+      </nav>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-5 pb-20 pt-10 md:pt-14">
+      <!-- Saludo -->
+      <section aria-labelledby="saludo">
+        <h1 id="saludo" class="serif text-4xl leading-[1.05] sm:text-6xl">
+          Hola, <em class="text-[var(--azul)]" th:text="${cliente.nombres}">Lucía</em>
+        </h1>
+        <p class="mt-4 max-w-xl text-base text-[var(--ink-2)]">
+          <span
+            th:if="${totalSolicitudes == 0}"
+            >Cuando pidas tu primer presupuesto, lo seguirás aquí paso a paso.</span
+          >
+          <span th:if="${totalSolicitudes > 0}"
+            th:text="${enCurso == 0 ? 'No tienes nada en curso ahora mismo.' : (enCurso == 1 ? 'Tienes 1 solicitud en curso.' : 'Tienes ' + enCurso + ' solicitudes en curso.')}"
+            >Tienes 1 solicitud en curso.</span
+          >
+          <span th:if="${confirmadas > 0}"
+            th:text="${confirmadas == 1 ? ' 1 mudanza confirmada.' : ' ' + confirmadas + ' mudanzas confirmadas.'}"
+          ></span>
+        </p>
+
+        <div
+          th:if="${param.solicitada}"
+          role="status"
+          class="mt-6 max-w-xl rounded-lg px-4 py-3 text-sm"
+          style="background: var(--verde-fondo); color: var(--verde)"
+        >
+          Recibimos tu solicitud. Te contactamos en cuanto la revisemos.
+        </div>
+        <div
+          th:if="${aviso}"
+          role="status"
+          class="mt-6 max-w-xl rounded-lg px-4 py-3 text-sm"
+          style="background: var(--verde-fondo); color: var(--verde)"
+          th:text="${aviso}"
+        ></div>
+        <div
+          th:if="${problema}"
+          role="alert"
+          class="mt-6 max-w-xl rounded-lg px-4 py-3 text-sm"
+          style="background: var(--rojo-fondo); color: var(--rojo)"
+          th:text="${problema}"
+        ></div>
+      </section>
+
+      <!-- Mudanza destacada: la ruta -->
+      <section id="mudanzas" class="mt-10" aria-label="Tu mudanza actual">
+        <article
+          th:if="${destacada != null}"
+          th:with="est=${destacada.estado.name()}, paso=${destacada.estado.name() == 'PENDIENTE' ? 0 : (destacada.estado.name() == 'CONTACTADO' ? 1 : 2)}"
+          class="overflow-hidden rounded-3xl text-white"
+          style="background: var(--ink)"
+        >
+          <div class="flex flex-wrap items-start justify-between gap-4 px-6 pt-6 sm:px-9 sm:pt-8">
+            <div>
+              <p class="serif text-2xl sm:text-3xl" th:text="${destacada.tipoMudanza}">Mudanza Local</p>
+              <p class="mt-1 text-sm text-white/60 tabular">
+                Solicitud n.º <span th:text="${destacada.id}">12</span> · pedida el
+                <span
+                  th:text="${#temporals.format(destacada.fechaCreacion, 'd MMM yyyy', T(java.util.Locale).forLanguageTag('es'))}"
+                  >3 oct 2026</span
+                >
+              </p>
+            </div>
+            <span
+              class="estado"
+              th:classappend="${'estado-' + #strings.toLowerCase(est)}"
+              th:text="${est == 'PENDIENTE' ? 'Recibida' : (est == 'CONTACTADO' ? 'En contacto' : 'Confirmada')}"
+              >En contacto</span
+            >
+          </div>
+
+          <div class="px-6 pt-9 sm:px-9">
+            <div class="flex items-end justify-between gap-6 text-sm">
+              <div class="min-w-0">
+                <p class="text-xs text-white/55">Sale de</p>
+                <p class="mt-0.5 break-words text-base font-medium sm:text-lg" th:text="${destacada.direccionOrigen}">Calle Mayor 12</p>
+              </div>
+              <div class="min-w-0 text-right">
+                <p class="text-xs text-white/55">Llega a</p>
+                <p class="mt-0.5 break-words text-base font-medium sm:text-lg" th:text="${destacada.direccionDestino}">Av. de América 88</p>
+              </div>
+            </div>
+
+            <div class="ruta mt-5" th:style="${'--paso:' + paso}">
+              <div class="ruta-via"></div>
+              <div class="ruta-recorrido"></div>
+              <span class="ruta-parada" style="left: 0" th:classappend="${paso >= 0} ? 'hecha'"></span>
+              <span class="ruta-parada" style="left: 50%" th:classappend="${paso >= 1} ? 'hecha'"></span>
+              <span class="ruta-parada" style="left: 100%" th:classappend="${paso >= 2} ? 'hecha'"></span>
+              <svg class="ruta-furgo" viewBox="0 0 48 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="3" width="28" height="17" rx="2.5" fill="#1f6fe5" />
+                <path d="M30 8h9l6 6.5V20H30z" fill="#0c1a33" />
+                <path d="M33 11h5l3 3.5h-8z" />
+                <circle cx="11" cy="22" r="3.6" fill="#0c1a33" />
+                <circle cx="37" cy="22" r="3.6" fill="#0c1a33" />
+              </svg>
+            </div>
+            <div class="mt-2 flex justify-between text-xs text-white/60">
+              <span th:classappend="${paso == 0} ? 'font-semibold text-white'">Recibida</span>
+              <span th:classappend="${paso == 1} ? 'font-semibold text-white'">En contacto</span>
+              <span th:classappend="${paso == 2} ? 'font-semibold text-white'">Confirmada</span>
+            </div>
+          </div>
+
+          <div class="mt-8 grid gap-6 border-t border-white/10 px-6 py-6 sm:grid-cols-[auto_1fr] sm:gap-10 sm:px-9">
+            <div class="flex gap-8 sm:block sm:space-y-5">
+              <div>
+                <p class="text-xs text-white/55">Fecha estimada</p>
+                <p class="mt-0.5 text-base font-medium tabular">
+                  <span
+                    th:if="${destacada.fechaEstimada != null}"
+                    th:text="${#temporals.format(destacada.fechaEstimada, 'd MMM yyyy', T(java.util.Locale).forLanguageTag('es'))}"
+                    >14 nov 2026</span
+                  >
+                  <span th:if="${destacada.fechaEstimada == null}">Por definir</span>
+                </p>
+                <p
+                  th:if="${diasRestantes != null}"
+                  class="text-sm text-[#8fbfff] tabular"
+                  th:text="${diasRestantes == 0 ? 'Es hoy' : (diasRestantes == 1 ? 'Falta 1 día' : 'Faltan ' + diasRestantes + ' días')}"
+                >
+                  Faltan 12 días
+                </p>
+              </div>
+            </div>
+            <div class="min-w-0">
+              <p class="text-xs text-white/55">Qué se traslada</p>
+              <p
+                class="mt-0.5 max-w-prose text-sm leading-relaxed text-white/85"
+                th:text="${destacada.comentarios != null and !destacada.comentarios.isBlank() ? destacada.comentarios : 'Sin detalles añadidos.'}"
+              >
+                Piso de 3 habitaciones.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 border-t border-white/10 px-6 py-5 sm:px-9">
+            <a
+              th:href="${'tel:' + empresa.telefonoEnlace}" href="tel:+34900000000"
+              class="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-[var(--ink)] transition hover:bg-[var(--azul-suave)]"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
+              Hablar con Ezur
+            </a>
+            <form
+              th:if="${est == 'PENDIENTE'}"
+              th:action="@{/cliente/solicitudes/{id}/cancelar(id=${destacada.id})}"
+              method="post"
+              class="form-cancelar"
+            >
+              <button type="submit" class="rounded-lg px-4 py-2 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-white">
+                Cancelar solicitud
+              </button>
+            </form>
+            <p th:if="${est != 'PENDIENTE'}" class="text-sm text-white/55">
+              Para cambiar algo de esta mudanza, escríbenos o llámanos.
+            </p>
+          </div>
+        </article>
+
+        <!-- Sin mudanzas todavía -->
+        <article
+          th:if="${destacada == null}"
+          class="rounded-3xl border bg-white px-6 py-9 sm:px-10 sm:py-11"
+          style="border-color: var(--line)"
+        >
+          <h2 class="serif max-w-lg text-3xl leading-tight sm:text-4xl">
+            Aún no tienes mudanzas. <em>Empecemos.</em>
+          </h2>
+          <p class="mt-3 max-w-lg text-[var(--ink-2)]">
+            Pide un presupuesto sin compromiso. Esto es lo que pasa después, y lo verás avanzar aquí:
+          </p>
+          <div class="ruta ruta-clara mt-8 max-w-xl" style="--paso: 0; color: var(--ink)">
+            <div class="ruta-via"></div>
+            <span class="ruta-parada" style="left: 0"></span>
+            <span class="ruta-parada" style="left: 50%"></span>
+            <span class="ruta-parada" style="left: 100%"></span>
+          </div>
+          <div class="-mt-1 flex max-w-xl justify-between text-sm font-medium">
+            <span>Recibimos tu solicitud</span>
+            <span>Te contactamos</span>
+            <span>Confirmamos fecha</span>
+          </div>
+          <a
+            th:href="@{/cotizar}"
+            class="mt-9 inline-block rounded-lg bg-[var(--azul)] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#1858b8]"
+            >Pedir mi primer presupuesto</a
+          >
+        </article>
+      </section>
+
+      <!-- Historial -->
+      <section th:if="${totalSolicitudes > 0}" class="mt-14" aria-labelledby="historial">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 id="historial" class="serif text-3xl">Todas tus solicitudes</h2>
+          <a th:href="@{/cotizar}" class="text-sm font-medium text-[var(--azul)] hover:underline">Nueva solicitud</a>
+        </div>
+
+        <ul class="mt-5 divide-y rounded-2xl border bg-white" style="border-color: var(--line)">
+          <li
+            th:each="s : ${solicitudes}"
+            th:with="est=${s.estado.name()}"
+            class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-4 sm:px-6"
+            style="border-color: var(--line)"
+          >
+            <div class="min-w-0 flex-1 basis-64">
+              <p class="font-semibold" th:text="${s.tipoMudanza}">Mudanza Local</p>
+              <p class="truncate text-sm text-[var(--ink-2)]">
+                <span th:text="${s.direccionOrigen}">Origen</span>
+                <span aria-hidden="true"> → </span><span class="sr-only"> hacia </span>
+                <span th:text="${s.direccionDestino}">Destino</span>
+              </p>
+            </div>
+            <p class="w-28 text-sm tabular text-[var(--ink-2)]">
+              <span
+                th:if="${s.fechaEstimada != null}"
+                th:text="${#temporals.format(s.fechaEstimada, 'd MMM yyyy', T(java.util.Locale).forLanguageTag('es'))}"
+                >14 nov 2026</span
+              >
+              <span th:if="${s.fechaEstimada == null}">Sin fecha</span>
+            </p>
+            <span
+              class="estado"
+              th:classappend="${'estado-' + #strings.toLowerCase(est)}"
+              th:text="${est == 'PENDIENTE' ? 'Recibida' : (est == 'CONTACTADO' ? 'En contacto' : (est == 'CONFIRMADO' ? 'Confirmada' : 'Cancelada'))}"
+              >Recibida</span
+            >
+            <form
+              th:if="${est == 'PENDIENTE'}"
+              th:action="@{/cliente/solicitudes/{id}/cancelar(id=${s.id})}"
+              method="post"
+              class="form-cancelar"
+            >
+              <button type="submit" class="text-sm font-medium text-[var(--rojo)] hover:underline">Cancelar</button>
+            </form>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Ezur y tú -->
+      <section id="ezur" class="mt-16" aria-labelledby="ezur-titulo">
+        <h2 id="ezur-titulo" class="serif max-w-xl text-3xl leading-tight sm:text-4xl">
+          Detrás de cada mudanza hay personas. <em>Escríbenos.</em>
+        </h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2">
+          <div>
+            <ul class="space-y-1 text-base">
+              <li>
+                <a th:href="${'tel:' + empresa.telefonoEnlace}" href="tel:+34900000000" class="group flex items-center gap-4 rounded-xl px-3 py-3 transition hover:bg-white">
+                  <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--azul-suave)] text-[var(--azul)]">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
+                  </span>
+                  <span><span class="block text-xs text-[var(--ink-2)]">Teléfono</span><span class="font-medium tabular" th:text="${empresa.telefono}">+34 900 000 000</span></span>
+                </a>
+              </li>
+              <li>
+                <a th:href="${'https://wa.me/' + #strings.replace(empresa.telefonoEnlace, '+', '')}" href="https://wa.me/34900000000" rel="noopener" class="group flex items-center gap-4 rounded-xl px-3 py-3 transition hover:bg-white">
+                  <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--azul-suave)] text-[var(--azul)]">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8z"/></svg>
+                  </span>
+                  <span><span class="block text-xs text-[var(--ink-2)]">WhatsApp</span><span class="font-medium">Escribir por WhatsApp</span></span>
+                </a>
+              </li>
+              <li>
+                <a th:href="${'mailto:' + empresa.email}" href="mailto:hola@ezur.example" class="group flex items-center gap-4 rounded-xl px-3 py-3 transition hover:bg-white">
+                  <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--azul-suave)] text-[var(--azul)]">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                  </span>
+                  <span><span class="block text-xs text-[var(--ink-2)]">Correo</span><span class="font-medium" th:text="${empresa.email}">hola@ezur.example</span></span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between gap-4">
+              <h3 class="text-sm font-semibold">Horario de atención</h3>
+              <p id="abierto" class="hidden items-center gap-2 text-sm font-medium" aria-live="polite"></p>
+            </div>
+            <dl class="mt-3 divide-y border-y text-sm tabular" style="border-color: var(--line)">
+              <div class="flex justify-between py-3" style="border-color: var(--line)"><dt>Lunes a viernes</dt><dd class="text-[var(--ink-2)]">8:00 – 21:00</dd></div>
+              <div class="flex justify-between py-3" style="border-color: var(--line)"><dt>Sábado</dt><dd class="text-[var(--ink-2)]">10:00 – 20:00</dd></div>
+              <div class="flex justify-between py-3" style="border-color: var(--line)"><dt>Domingo</dt><dd class="text-[var(--ink-2)]">10:00 – 17:00</dd></div>
+            </dl>
+            <p class="mt-3 text-xs text-[var(--ink-2)]">Hora de España peninsular.</p>
+          </div>
+        </div>
+
+        <!-- Lo que has hecho con Ezur -->
+        <div class="mt-12">
+          <h3 class="text-sm font-semibold">Tu actividad con Ezur</h3>
+          <ol class="mt-4 space-y-4 border-l pl-6" style="border-color: var(--line)">
+            <li th:each="s, fila : ${solicitudes}" th:if="${fila.index < 4}" class="relative">
+              <span class="absolute -left-[1.85rem] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--azul)] ring-4 ring-[var(--paper)]"></span>
+              <p class="text-sm">
+                Pediste presupuesto de <strong th:text="${#strings.toLowerCase(s.tipoMudanza)}">mudanza local</strong>
+              </p>
+              <p
+                class="text-xs text-[var(--ink-2)] tabular"
+                th:text="${#temporals.format(s.fechaCreacion, 'd MMM yyyy', T(java.util.Locale).forLanguageTag('es'))}"
+              >
+                3 oct 2026
+              </p>
+            </li>
+            <li class="relative">
+              <span class="absolute -left-[1.85rem] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--ink)] ring-4 ring-[var(--paper)]"></span>
+              <p class="text-sm">Creaste tu cuenta en Ezur</p>
+              <p
+                th:if="${cliente.fechaRegistro != null}"
+                class="text-xs text-[var(--ink-2)] tabular"
+                th:text="${#temporals.format(cliente.fechaRegistro, 'd MMM yyyy', T(java.util.Locale).forLanguageTag('es'))}"
+              >
+                23 sep 2026
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Mi cuenta -->
+      <section id="cuenta" class="mt-16" aria-labelledby="cuenta-titulo">
+        <h2 id="cuenta-titulo" class="serif text-3xl">Mi cuenta</h2>
+
+        <div class="mt-6 grid gap-10 lg:grid-cols-2">
+          <dl class="divide-y border-y text-sm" style="border-color: var(--line)">
+            <div class="flex justify-between gap-4 py-3.5" style="border-color: var(--line)"><dt class="text-[var(--ink-2)]">Nombre</dt><dd class="font-medium" th:text="${cliente.nombreCompleto}">Lucía Rojas</dd></div>
+            <div class="flex justify-between gap-4 py-3.5" style="border-color: var(--line)"><dt class="text-[var(--ink-2)]">DNI</dt><dd class="font-medium tabular" th:text="${'••••' + #strings.substring(cliente.dni, 4)}">••••1236</dd></div>
+            <div class="flex justify-between gap-4 py-3.5" style="border-color: var(--line)"><dt class="text-[var(--ink-2)]">Usuario</dt><dd class="font-medium" th:text="${cliente.usuario}">lucia.rojas</dd></div>
+            <div class="flex justify-between gap-4 py-3.5" style="border-color: var(--line)"><dt class="text-[var(--ink-2)]">Perfil</dt><dd class="font-medium" th:text="${cliente.perfil.etiqueta}">Cliente</dd></div>
+            <div th:if="${cliente.fechaRegistro != null}" class="flex justify-between gap-4 py-3.5" style="border-color: var(--line)">
+              <dt class="text-[var(--ink-2)]">Cliente desde</dt>
+              <dd class="font-medium tabular" th:text="${#temporals.format(cliente.fechaRegistro, 'd MMM yyyy', T(java.util.Locale).forLanguageTag('es'))}">23 sep 2026</dd>
+            </div>
+          </dl>
+
+          <div>
+            <details th:attr="open=${abrirClave} ? 'open'" class="rounded-2xl border bg-white" style="border-color: var(--line)">
+              <summary class="flex items-center justify-between gap-4 px-5 py-4 text-sm font-semibold">
+                Cambiar mi clave
+                <svg class="giro h-4 w-4 text-[var(--ink-2)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              </summary>
+              <form
+                th:action="@{/cliente/clave}"
+                th:object="${cambioClave}"
+                method="post"
+                class="space-y-4 border-t px-5 py-5"
+                style="border-color: var(--line)"
+              >
+                <div>
+                  <label for="actual" class="mb-1 block text-sm">Clave actual</label>
+                  <input type="password" id="actual" th:field="*{actual}" autocomplete="current-password" maxlength="72"
+                    class="w-full rounded-lg border bg-white px-3 py-2.5 text-sm" style="border-color: var(--line)" />
+                  <p th:if="${#fields.hasErrors('actual')}" th:errors="*{actual}" class="mt-1 text-xs text-[var(--rojo)]"></p>
+                </div>
+                <div>
+                  <label for="nueva" class="mb-1 block text-sm">Clave nueva (mínimo 10 caracteres)</label>
+                  <input type="password" id="nueva" th:field="*{nueva}" autocomplete="new-password" maxlength="72"
+                    class="w-full rounded-lg border bg-white px-3 py-2.5 text-sm" style="border-color: var(--line)" />
+                  <p th:if="${#fields.hasErrors('nueva')}" th:errors="*{nueva}" class="mt-1 text-xs text-[var(--rojo)]"></p>
+                </div>
+                <div>
+                  <label for="confirmacion" class="mb-1 block text-sm">Repite la clave nueva</label>
+                  <input type="password" id="confirmacion" th:field="*{confirmacion}" autocomplete="new-password" maxlength="72"
+                    class="w-full rounded-lg border bg-white px-3 py-2.5 text-sm" style="border-color: var(--line)" />
+                  <p th:if="${#fields.hasErrors('confirmacion')}" th:errors="*{confirmacion}" class="mt-1 text-xs text-[var(--rojo)]"></p>
+                </div>
+                <button type="submit" class="rounded-lg bg-[var(--ink)] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#1b2f55]">
+                  Guardar clave nueva
+                </button>
+              </form>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t" style="border-color: var(--line)">
+      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-6 text-xs text-[var(--ink-2)]">
+        <p>© Ezur Transporte y Mudanzas</p>
+        <a th:href="@{/politica-privacidad}" class="hover:text-[var(--ink)] hover:underline">Política de privacidad</a>
+      </div>
+    </footer>
+
+    <script>
+      // Pide confirmación antes de cancelar una solicitud
+      document.querySelectorAll(".form-cancelar").forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+          if (!confirm("¿Cancelar esta solicitud? Esta acción no se puede deshacer.")) {
+            e.preventDefault();
+          }
+        });
+      });
+
+      // "Abierto ahora" según la hora de Madrid, sea cual sea la zona del visitante
+      (function () {
+        var horario = { 1: [8, 21], 2: [8, 21], 3: [8, 21], 4: [8, 21], 5: [8, 21], 6: [10, 20], 0: [10, 17] };
+        var el = document.getElementById("abierto");
+        if (!el) return;
+        var partes = new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Europe/Madrid", weekday: "short", hour: "numeric", minute: "numeric", hour12: false
+        }).formatToParts(new Date());
+        var dato = {};
+        partes.forEach(function (p) { dato[p.type] = p.value; });
+        var dia = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[dato.weekday];
+        var hora = parseInt(dato.hour, 10) + parseInt(dato.minute, 10) / 60;
+        var tramo = horario[dia];
+        var abierto = tramo && hora >= tramo[0] && hora < tramo[1];
+        el.className = "flex items-center gap-2 text-sm font-medium " + (abierto ? "text-[var(--verde)]" : "text-[var(--ink-2)]");
+        el.innerHTML = '<span class="h-2 w-2 rounded-full" style="background:currentColor"></span>' + (abierto ? "Abiertos ahora" : "Cerrado ahora");
+      })();
+    </script>
+  </body>
+</html>

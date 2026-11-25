@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <th:block th:replace="~{fragments/layout :: cabecera('Pedir presupuesto · Ezur', 'Completa el formulario y te contactaremos con una propuesta a tu medida, sin compromiso.')}"></th:block>
+    <link rel="stylesheet" href="/css/output.css" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="/css/ezur.css" th:href="@{/css/ezur.css}" />
+  </head>
+
+  <body>
+    <header th:replace="~{fragments/layout :: nav('cotizar')}"></header>
+
+    <main style="padding-block: clamp(3rem, 7vw, 5.5rem) clamp(4rem, 8vw, 7rem)">
+      <div class="contenedor" style="max-width: 46rem">
+        <h1 id="titular" style="font-size: clamp(2.3rem, 5vw, 3.6rem)">
+          <span class="linea"><span style="--i: 0">Pide tu <span class="marca">presupuesto</span></span></span>
+        </h1>
+        <p class="entra mt-5 text-lg gris" style="--i: 1">Cuéntanos qué mueves. Es gratis y sin compromiso.</p>
+
+
+        <div class="avance entra" style="--i: 2; margin-top: 2rem">
+          <div class="avance-pista" role="progressbar" aria-label="Avance del formulario" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-avance-barra></span></div>
+        </div>
+
+        <form th:action="@{/cotizar}" th:object="${presupuesto}" method="post" class="mt-8 grid gap-12" aria-labelledby="titular" data-avance>
+          <div th:if="${exito}" data-aviso role="status" class="aviso aviso-ok">
+            <p><strong>¡Enviado correctamente!</strong></p>
+            <p>Hemos recibido tu solicitud y te contactaremos lo antes posible.</p>
+          </div>
+          <div th:if="${#fields.hasErrors('*')}" data-aviso role="alert" class="aviso aviso-error">
+            <p><strong>Revisa los campos marcados e inténtalo de nuevo.</strong></p>
+          </div>
+
+          <fieldset class="grid gap-5" style="border: 0; padding: 0; margin: 0">
+            <legend class="mb-5 text-[1.6rem]" style="font-family: var(--titulos); font-weight: 700; letter-spacing: -0.02em">Tus datos</legend>
+            <div class="campo-grupo">
+              <label for="nombre" class="campo-etiqueta">Nombre completo</label>
+              <input type="text" id="nombre" th:field="*{nombreCompleto}" placeholder="Ana Ejemplo" required maxlength="100" autocomplete="name" class="campo" />
+              <p th:if="${#fields.hasErrors('nombreCompleto')}" th:errors="*{nombreCompleto}" class="campo-error"></p>
+            </div>
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="campo-grupo">
+                <label for="email" class="campo-etiqueta">Correo electrónico</label>
+                <input type="email" id="email" th:field="*{email}" placeholder="ejemplo@correo.com" required maxlength="150" autocomplete="email" class="campo" />
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="campo-error"></p>
+              </div>
+              <div class="campo-grupo">
+                <label for="telefono" class="campo-etiqueta">Teléfono</label>
+                <input type="tel" id="telefono" th:field="*{telefono}" required maxlength="30" autocomplete="tel" class="campo" />
+                <p th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}" class="campo-error"></p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="grid gap-5" style="border: 0; padding: 0; margin: 0">
+            <legend class="mb-5 text-[1.6rem]" style="font-family: var(--titulos); font-weight: 700; letter-spacing: -0.02em">Detalles de tu mudanza</legend>
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="campo-grupo">
+                <label for="origen" class="campo-etiqueta">Dirección de origen</label>
+                <input type="text" id="origen" th:field="*{direccionOrigen}" required maxlength="200" class="campo" />
+                <p th:if="${#fields.hasErrors('direccionOrigen')}" th:errors="*{direccionOrigen}" class="campo-error"></p>
+              </div>
+              <div class="campo-grupo">
+                <label for="destino" class="campo-etiqueta">Dirección de destino</label>
+                <input type="text" id="destino" th:field="*{direccionDestino}" required maxlength="200" class="campo" />
+                <p th:if="${#fields.hasErrors('direccionDestino')}" th:errors="*{direccionDestino}" class="campo-error"></p>
+              </div>
+            </div>
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="campo-grupo">
+                <label for="tipo" class="campo-etiqueta">Tipo de mudanza</label>
+                <select id="tipo" th:field="*{tipoMudanza}" required class="campo">
+                  <option value="">Selecciona una opción</option>
+                  <option th:each="t : ${tiposServicio}" th:value="${t.nombre}" th:text="${t.nombre}"></option>
+                </select>
+                <p th:if="${#fields.hasErrors('tipoMudanza')}" th:errors="*{tipoMudanza}" class="campo-error"></p>
+              </div>
+              <div class="campo-grupo">
+                <label for="fecha" class="campo-etiqueta">Fecha estimada</label>
+                <input type="date" id="fecha" th:field="*{fechaEstimada}" required class="campo" />
+                <p th:if="${#fields.hasErrors('fechaEstimada')}" th:errors="*{fechaEstimada}" class="campo-error"></p>
+              </div>
+            </div>
+            <div class="campo-grupo">
+              <label for="comentarios" class="campo-etiqueta">Qué deseas trasladar</label>
+              <textarea id="comentarios" th:field="*{comentarios}" rows="5" maxlength="2000" placeholder="Ej: 1 cama de matrimonio, 1 nevera, 1 lavadora, 6 cajas de ropa, sofá de 3 plazas…" class="campo"></textarea>
+              <p class="campo-ayuda">Cuanto más detallado, más exacto será tu presupuesto. Máximo 2000 caracteres.</p>
+              <p th:if="${#fields.hasErrors('comentarios')}" th:errors="*{comentarios}" class="campo-error"></p>
+            </div>
+          </fieldset>
+
+          <div>
+            <div class="casilla-privacidad">
+              <input type="checkbox" th:field="*{aceptaPrivacidad}" id="consentimiento" required />
+              <label for="consentimiento">
+                He leído y acepto la
+                <a th:href="@{/politica-privacidad}" target="_blank" rel="noopener" class="font-semibold underline">política de privacidad</a>
+              </label>
+            </div>
+            <p th:if="${#fields.hasErrors('aceptaPrivacidad')}" th:errors="*{aceptaPrivacidad}" class="campo-error mt-1"></p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
+            <button type="submit" class="boton">Enviar solicitud</button>
+            <p class="gris" style="margin: 0; font-size: 0.95rem">
+              ¿Prefieres hablar?
+              <a th:href="${'tel:' + (empresa?.telefonoEnlace ?: '+34900000000')}" class="font-semibold text-[var(--azul)] tabular" th:text="${empresa?.telefono ?: '+34 900 000 000'}">+34 900 000 000</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: pie}"></footer>
+    <th:block th:replace="~{fragments/layout :: menuJs}"></th:block>
+    <script th:src="@{/js/evitar-doble-envio.js}" defer></script>
+    <script th:src="@{/js/aviso-formulario.js}" defer></script>
+  </body>
+</html>

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/output.css" />
+    <title>Testimonios - Ezur Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-50 min-h-screen flex">
+    <aside class="w-64 bg-gray-900 text-gray-300 flex flex-col shrink-0">
+      <div class="flex items-center gap-2 px-6 py-5 border-b border-gray-800">
+        <img src="/img/logo.jpg" alt="Ezur" class="w-8 h-8 rounded" />
+        <span class="font-sans font-semibold text-white text-sm"
+          >Ezur Admin</span
+        >
+      </div>
+
+      <nav class="flex-1 px-3 py-4 space-y-1">
+        <a
+          href="/admin"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm"
+          >Solicitudes</a
+        >
+        <a
+          href="/admin/mensajes"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm"
+          >Mensajes</a
+        >
+        <a
+          href="/admin/testimonios"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-800 text-white text-sm font-medium"
+          >Testimonios</a
+        >
+        <a
+          href="/admin/usuarios"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm"
+          >Usuarios</a
+        >
+      </nav>
+
+      <div class="px-3 py-4 border-t border-gray-800">
+        <form th:action="@{/logout}" method="post">
+          <button
+            type="submit"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm w-full text-left"
+          >
+            Cerrar sesión
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <main class="flex-1">
+      <header
+        class="bg-gray-50 border-b border-gray-200 px-8 py-4 flex items-center justify-between"
+      >
+        <h1 class="text-lg font-semibold text-gray-900">Testimonios</h1>
+        <a
+          href="/admin/testimonios/nuevo"
+          class="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800"
+        >
+          + Nuevo testimonio
+        </a>
+      </header>
+
+      <div class="p-8">
+        <div
+          th:if="${exito}"
+          class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+          th:text="${exito}"
+        >
+          Hecho
+        </div>
+        <div
+          th:if="${eliminado}"
+          class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+        >
+          Testimonio eliminado correctamente.
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-500 text-xs uppercase text-left">
+              <tr>
+                <th class="px-6 py-3 font-medium">Nombre</th>
+                <th class="px-6 py-3 font-medium">Testimonio</th>
+                <th class="px-6 py-3 font-medium">Servicio</th>
+                <th class="px-6 py-3 font-medium">Estrellas</th>
+                <th class="px-6 py-3 font-medium">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr th:each="t : ${testimonios}" class="hover:bg-gray-50">
+                <td
+                  class="px-6 py-4 font-medium text-gray-900"
+                  th:text="${t.nombre}"
+                >
+                  Nombre
+                </td>
+                <td
+                  class="px-6 py-4 text-gray-600 max-w-xs truncate"
+                  th:text="${t.texto}"
+                >
+                  Texto
+                </td>
+                <td class="px-6 py-4 text-gray-600" th:text="${t.servicio}">
+                  Servicio
+                </td>
+                <td
+                  class="px-6 py-4 text-gray-600"
+                  th:text="${t.estrellas + ' / 5'}"
+                >
+                  5 / 5
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-4">
+                    <a
+                      th:href="@{/admin/testimonios/{id}/editar(id=${t.id})}"
+                      class="text-sm font-medium text-gray-900 hover:underline"
+                      >Editar</a
+                    >
+                    <form
+                      th:action="@{/admin/testimonios/{id}/eliminar(id=${t.id})}"
+                      method="post"
+                      class="form-eliminar"
+                      th:attr="data-nombre=${t.nombre}"
+                    >
+                      <button
+                        type="submit"
+                        class="text-sm font-medium text-red-600 hover:underline"
+                      >
+                        Eliminar
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(testimonios)}">
+                <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                  Aún no hay testimonios. Crea el primero con "Nuevo
+                  testimonio".
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      document.querySelectorAll(".form-eliminar").forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+          var nombre = form.dataset.nombre;
+          if (
+            !confirm(
+              '¿Eliminar el testimonio de "' +
+                nombre +
+                '"? Esta acción no se puede deshacer.',
+            )
+          ) {
+            e.preventDefault();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

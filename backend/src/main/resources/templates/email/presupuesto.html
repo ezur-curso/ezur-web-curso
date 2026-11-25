@@ -1,0 +1,427 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light only" />
+    <title>Nuevo presupuesto</title>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f3f5f9">
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      bgcolor="#f3f5f9"
+      style="background-color: #f3f5f9"
+    >
+      <tr>
+        <td align="center" style="padding: 28px 14px 36px 14px">
+          <table
+            role="presentation"
+            width="560"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="width: 100%; max-width: 560px"
+          >
+            <tr>
+              <td
+                style="
+                  padding: 0 4px 14px 4px;
+                  font-family:
+                    &quot;Arial Black&quot;, &quot;Helvetica Neue&quot;, Arial,
+                    sans-serif;
+                  font-weight: 900;
+                  font-size: 22px;
+                  letter-spacing: 2px;
+                  color: #111111;
+                "
+              >
+                <span
+                  style="
+                    display: inline-block;
+                    background-color: #5a98ff;
+                    padding: 6px 14px;
+                    border-radius: 4px;
+                  "
+                  >EZUR</span
+                >
+              </td>
+            </tr>
+
+            <!-- La etiqueta -->
+            <tr>
+              <td
+                bgcolor="#ffffff"
+                style="
+                  background-color: #ffffff;
+                  border: 3px dashed #111111;
+                  border-radius: 6px;
+                  padding: 30px 28px 28px 28px;
+                  font-family: Arial, Helvetica, sans-serif;
+                  color: #111111;
+                "
+              >
+                <div
+                  th:text="${nombre}"
+                  style="
+                    font-family:
+                      &quot;Arial Black&quot;, &quot;Helvetica Neue&quot;,
+                      Arial, sans-serif;
+                    font-weight: 900;
+                    font-size: 34px;
+                    line-height: 38px;
+                    color: #111111;
+                  "
+                >
+                  María Fernández
+                </div>
+                <div style="font-size: 15px; color: #4b5563; padding-top: 6px">
+                  Pide un presupuesto
+                </div>
+
+                <div
+                  style="
+                    height: 4px;
+                    line-height: 4px;
+                    font-size: 0;
+                    background-color: #111111;
+                    margin: 22px 0 20px 0;
+                  "
+                >
+                  &nbsp;
+                </div>
+
+                <!-- Contacto -->
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                >
+                  <tr>
+                    <td
+                      width="60%"
+                      valign="top"
+                      style="padding-right: 10px; padding-bottom: 6px"
+                    >
+                      <div
+                        style="
+                          font-size: 12px;
+                          font-weight: bold;
+                          color: #6b7280;
+                        "
+                      >
+                        Email
+                      </div>
+                      <div
+                        style="
+                          font-size: 16px;
+                          font-weight: bold;
+                          padding-top: 2px;
+                          word-break: break-all;
+                        "
+                      >
+                        <a
+                          th:href="'mailto:' + ${email}"
+                          th:text="${email}"
+                          style="color: #111111; text-decoration: underline"
+                          >maria@correo.com</a
+                        >
+                      </div>
+                    </td>
+                    <td width="40%" valign="top" style="padding-bottom: 6px">
+                      <div
+                        style="
+                          font-size: 12px;
+                          font-weight: bold;
+                          color: #6b7280;
+                        "
+                      >
+                        Teléfono
+                      </div>
+                      <div
+                        th:text="${telefono} ?: 'No indicado'"
+                        style="
+                          font-size: 16px;
+                          font-weight: bold;
+                          padding-top: 2px;
+                        "
+                      >
+                        +34 900 000 000
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+
+                <div
+                  style="
+                    height: 2px;
+                    line-height: 2px;
+                    font-size: 0;
+                    background-color: #111111;
+                    margin: 18px 0 22px 0;
+                  "
+                >
+                  &nbsp;
+                </div>
+
+                <!-- Trayecto -->
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                >
+                  <tr>
+                    <td
+                      width="30"
+                      valign="top"
+                      align="center"
+                      style="padding-top: 5px"
+                    >
+                      <div
+                        style="
+                          width: 14px;
+                          height: 14px;
+                          border-radius: 14px;
+                          background-color: #111111;
+                          margin: 0 auto;
+                        "
+                      >
+                        &nbsp;
+                      </div>
+                    </td>
+                    <td valign="top">
+                      <div
+                        style="
+                          font-size: 12px;
+                          font-weight: bold;
+                          color: #6b7280;
+                        "
+                      >
+                        Sale de
+                      </div>
+                      <div
+                        th:text="${origen}"
+                        style="
+                          font-size: 20px;
+                          line-height: 26px;
+                          font-weight: bold;
+                          padding-top: 2px;
+                        "
+                      >
+                        Calle Ejemplo 123, Ciudad Ejemplo
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="30" align="center" style="padding: 6px 0">
+                      <div
+                        style="
+                          width: 0;
+                          height: 34px;
+                          border-left: 3px dotted #111111;
+                          margin: 0 auto;
+                          font-size: 0;
+                          line-height: 0;
+                        "
+                      >
+                        &nbsp;
+                      </div>
+                    </td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td
+                      width="30"
+                      valign="top"
+                      align="center"
+                      style="padding-top: 5px"
+                    >
+                      <div
+                        style="
+                          width: 14px;
+                          height: 14px;
+                          border-radius: 14px;
+                          background-color: #5a98ff;
+                          border: 3px solid #111111;
+                          margin: 0 auto;
+                        "
+                      >
+                        &nbsp;
+                      </div>
+                    </td>
+                    <td valign="top">
+                      <div
+                        style="
+                          font-size: 12px;
+                          font-weight: bold;
+                          color: #6b7280;
+                        "
+                      >
+                        Llega a
+                      </div>
+                      <div
+                        th:text="${destino}"
+                        style="
+                          font-size: 20px;
+                          line-height: 26px;
+                          font-weight: bold;
+                          padding-top: 2px;
+                        "
+                      >
+                        Av. de la Constitución 45, Sevilla
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+
+                <div
+                  style="
+                    height: 2px;
+                    line-height: 2px;
+                    font-size: 0;
+                    background-color: #111111;
+                    margin: 24px 0 18px 0;
+                  "
+                >
+                  &nbsp;
+                </div>
+
+                <!-- Tipo y fecha -->
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                >
+                  <tr>
+                    <td width="60%" valign="top" style="padding-right: 10px">
+                      <div
+                        style="
+                          font-size: 12px;
+                          font-weight: bold;
+                          color: #6b7280;
+                        "
+                      >
+                        Tipo de mudanza
+                      </div>
+                      <div
+                        th:text="${tipo}"
+                        style="
+                          font-size: 16px;
+                          font-weight: bold;
+                          padding-top: 2px;
+                        "
+                      >
+                        Vivienda
+                      </div>
+                    </td>
+                    <td width="40%" valign="top">
+                      <div
+                        style="
+                          font-size: 12px;
+                          font-weight: bold;
+                          color: #6b7280;
+                        "
+                      >
+                        Fecha estimada
+                      </div>
+                      <div
+                        th:text="${fecha} ?: 'No indicada'"
+                        style="
+                          font-size: 16px;
+                          font-weight: bold;
+                          padding-top: 2px;
+                        "
+                      >
+                        2026-11-15
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Inventario -->
+                <div
+                  style="
+                    margin-top: 22px;
+                    background-color: #eef4ff;
+                    border-radius: 4px;
+                    padding: 16px 18px;
+                  "
+                >
+                  <div
+                    style="
+                      font-family:
+                        &quot;Arial Black&quot;, &quot;Helvetica Neue&quot;,
+                        Arial, sans-serif;
+                      font-weight: 900;
+                      font-size: 15px;
+                      color: #111111;
+                      padding-bottom: 8px;
+                    "
+                  >
+                    Qué se traslada
+                  </div>
+                  <div
+                    th:text="${inventario} ?: 'No indicado'"
+                    style="
+                      font-size: 15px;
+                      line-height: 23px;
+                      color: #1f2937;
+                      white-space: pre-line;
+                    "
+                  >
+                    1 cama, 1 nevera, 6 cajas
+                  </div>
+                </div>
+
+                <!-- Botón -->
+                <div style="padding-top: 26px">
+                  <a
+                    th:href="${baseUrl} + '/admin'"
+                    style="
+                      display: inline-block;
+                      background-color: #ffd60a;
+                      color: #111111;
+                      font-family:
+                        &quot;Arial Black&quot;, &quot;Helvetica Neue&quot;,
+                        Arial, sans-serif;
+                      font-weight: 900;
+                      font-size: 15px;
+                      text-decoration: none;
+                      padding: 15px 28px;
+                      border: 3px solid #111111;
+                      border-radius: 6px;
+                    "
+                    >Abrir en el panel</a
+                  >
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                style="
+                  padding: 16px 4px 0 4px;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 12px;
+                  font-weight: bold;
+                  color: #6b7280;
+                "
+              >
+                EZUR Transporte y Mudanzas
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

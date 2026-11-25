@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <th:block th:replace="~{fragments/layout :: cabecera('Servicios · Ezur', 'Mudanza local, internacional, montaje y desmontaje de muebles y traslado de oficinas.')}"></th:block>
+    <link rel="stylesheet" href="/css/output.css" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="/css/ezur.css" th:href="@{/css/ezur.css}" />
+  </head>
+
+  <body>
+    <header th:replace="~{fragments/layout :: nav('servicios')}"></header>
+
+    <main>
+      <!-- Presentación -->
+      <section aria-labelledby="titular" style="padding-block: clamp(3.5rem, 8vw, 6rem) clamp(2rem, 4vw, 3rem)">
+        <div class="contenedor">
+          <h1 id="titular" class="max-w-4xl">
+            <span class="linea"><span style="--i: 0">Elige cómo</span></span>
+            <span class="linea"><span style="--i: 1">quieres <span class="marca">mudarte</span></span></span>
+          </h1>
+          <p class="entra mt-6 max-w-xl text-lg gris" style="--i: 2">Cuatro servicios, el mismo equipo y el mismo cuidado.</p>
+        </div>
+      </section>
+
+      <!-- Relato: el texto avanza y la foto cambia -->
+      <section class="relato" aria-label="Nuestros servicios" data-relato>
+        <div class="contenedor relato-rejilla">
+          <div class="relato-capitulos">
+            <article id="local" class="capitulo" data-capitulo="0" aria-labelledby="local-titulo">
+              <img class="capitulo-foto" src="/img/galeria/mud4.png" th:src="@{/img/galeria/mud4.png}" alt="Camión cargado con cajas ordenadas" style="object-position: 50% 62%" loading="lazy" />
+              <span class="capitulo-num">01</span>
+              <h2 id="local-titulo">Mudanza local</h2>
+              <p class="capitulo-texto">Dentro de tu ciudad y en un solo día. Embalamos, cargamos, llevamos y descargamos.</p>
+              <dl class="capitulo-datos">
+                <div><dt>Ideal para</dt><dd>Pisos y casas</dd></div>
+                <div><dt>Duración típica</dt><dd>3 a 8 horas</dd></div>
+                <div><dt>Equipo</dt><dd>2 a 4 personas</dd></div>
+              </dl>
+              <ul class="chips chips-claros"><li>Embalaje incluido</li><li>Seguro incluido</li><li>Flota propia</li></ul>
+              <a th:href="@{/cotizar(tipo='Mudanza Local')}" class="boton mt-7">Pedir presupuesto <span class="flecha" aria-hidden="true">→</span></a>
+            </article>
+
+            <article id="internacional" class="capitulo" data-capitulo="1" aria-labelledby="internacional-titulo">
+              <img class="capitulo-foto" src="/img/galeria/mud5.png" th:src="@{/img/galeria/mud5.png}" alt="Valle alpino con montañas nevadas" loading="lazy" />
+              <span class="capitulo-num">02</span>
+              <h2 id="internacional-titulo">Mudanza internacional</h2>
+              <p class="capitulo-texto">De puerta a puerta, aunque haya fronteras de por medio. Nos encargamos de la aduana.</p>
+              <dl class="capitulo-datos">
+                <div><dt>Ideal para</dt><dd>Cambios de país</dd></div>
+                <div><dt>Duración típica</dt><dd>Según destino</dd></div>
+                <div><dt>Seguimiento</dt><dd>En tiempo real</dd></div>
+              </dl>
+              <ul class="chips chips-claros"><li>Gestión de aduanas</li><li>Seguro internacional</li><li>Cobertura mundial</li></ul>
+              <a th:href="@{/cotizar(tipo='Mudanza Internacional')}" class="boton mt-7">Pedir presupuesto <span class="flecha" aria-hidden="true">→</span></a>
+            </article>
+
+            <article id="montaje" class="capitulo" data-capitulo="2" aria-labelledby="montaje-titulo">
+              <img class="capitulo-foto" src="/img/galeria/mud1.png" th:src="@{/img/galeria/mud1.png}" alt="Armarios y colchones forrados con film" style="object-position: 50% 55%" loading="lazy" />
+              <span class="capitulo-num">03</span>
+              <h2 id="montaje-titulo">Montaje y desmontaje</h2>
+              <p class="capitulo-texto">Armarios, camas y muebles modulares: los desmontamos, los protegemos y los dejamos montados.</p>
+              <dl class="capitulo-datos">
+                <div><dt>Ideal para</dt><dd>Muebles grandes</dd></div>
+                <div><dt>Herrajes</dt><dd>Embolsados y rotulados</dd></div>
+                <div><dt>Garantía</dt><dd>Sin daños</dd></div>
+              </dl>
+              <ul class="chips chips-claros"><li>Herramienta propia</li><li>Todo tipo de mobiliario</li><li>Piezas pequeñas embaladas</li></ul>
+              <a th:href="@{/cotizar}" class="boton mt-7">Pedir presupuesto <span class="flecha" aria-hidden="true">→</span></a>
+            </article>
+
+            <article id="oficinas" class="capitulo" data-capitulo="3" aria-labelledby="oficinas-titulo">
+              <img class="capitulo-foto" src="/img/galeria/mud2.png" th:src="@{/img/galeria/mud2.png}" alt="Camión con muebles de oficina protegidos" style="object-position: 50% 45%" loading="lazy" />
+              <span class="capitulo-num">04</span>
+              <h2 id="oficinas-titulo">Oficinas y comercios</h2>
+              <p class="capitulo-texto">Planificamos el traslado para que tu negocio pare lo mínimo, incluso de noche o en fin de semana.</p>
+              <dl class="capitulo-datos">
+                <div><dt>Ideal para</dt><dd>Oficinas y locales</dd></div>
+                <div><dt>Horario</dt><dd>A tu medida</dd></div>
+                <div><dt>Documentos</dt><dd>Precintados</dd></div>
+              </dl>
+              <ul class="chips chips-claros"><li>Fuera de horario</li><li>Equipos protegidos</li><li>Coordinación previa</li></ul>
+              <a th:href="@{/cotizar(tipo='Oficina / Comercio')}" class="boton mt-7">Pedir presupuesto <span class="flecha" aria-hidden="true">→</span></a>
+            </article>
+          </div>
+
+          <!-- Foto fija que acompaña al capítulo activo -->
+          <div class="relato-visor" aria-hidden="true">
+            <div class="visor-marco">
+              <img class="activa" src="/img/galeria/mud4.png" th:src="@{/img/galeria/mud4.png}" alt="" style="object-position: 50% 62%" />
+              <img src="/img/galeria/mud5.png" th:src="@{/img/galeria/mud5.png}" alt="" loading="lazy" />
+              <img src="/img/galeria/mud1.png" th:src="@{/img/galeria/mud1.png}" alt="" style="object-position: 50% 55%" loading="lazy" />
+              <img src="/img/galeria/mud2.png" th:src="@{/img/galeria/mud2.png}" alt="" style="object-position: 50% 45%" loading="lazy" />
+              <div class="visor-progreso"><span class="activo"></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Extras -->
+      <section class="seccion fondo-suave" aria-labelledby="extras-titulo">
+        <div class="contenedor extras-rejilla">
+          <div data-revelar>
+            <h2 id="extras-titulo">Añade lo que necesites</h2>
+            <p class="mt-4 gris">Servicios que puedes sumar a cualquier mudanza o contratar por separado.</p>
+            <p class="mt-6 text-sm gris">Precios orientativos de ejemplo.</p>
+          </div>
+          <ul class="extras">
+            <li data-revelar style="--i: 0"><div><h3>Embalaje profesional</h3><p>Cajas, papel, film y mantas para todo el hogar.</p></div><span class="precio">desde <strong>49 €</strong></span></li>
+            <li data-revelar style="--i: 1"><div><h3>Guardamuebles</h3><p>Espacio seguro mientras tu nueva casa está lista.</p></div><span class="precio">desde <strong>39 €/mes</strong></span></li>
+            <li data-revelar style="--i: 2"><div><h3>Elevador exterior</h3><p>Para pisos altos o muebles que no caben por la escalera.</p></div><span class="precio">desde <strong>120 €</strong></span></li>
+            <li data-revelar style="--i: 3"><div><h3>Montaje de muebles nuevos</h3><p>Te montamos lo que acabas de comprar.</p></div><span class="precio">desde <strong>35 €</strong></span></li>
+            <li data-revelar style="--i: 4"><div><h3>Retirada de muebles viejos</h3><p>Nos llevamos lo que ya no quieres al punto limpio.</p></div><span class="precio">desde <strong>45 €</strong></span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Garantías -->
+      <section class="seccion garantias" aria-labelledby="garantias-titulo">
+        <div class="contenedor">
+          <h2 id="garantias-titulo" class="sr-only-ez">Nuestras garantías</h2>
+          <ol class="garantias-lista">
+            <li data-revelar><strong>Precio cerrado.</strong><span>El presupuesto que aceptas es el que pagas.</span></li>
+            <li data-revelar style="--i: 1"><strong>Seguro incluido.</strong><span>Si algo se daña, respondemos nosotros.</span></li>
+            <li data-revelar style="--i: 2"><strong>Hora acordada.</strong><span>Llegamos cuando dijimos que llegaríamos.</span></li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: pie}"></footer>
+    <th:block th:replace="~{fragments/layout :: menuJs}"></th:block>
+  </body>
+</html>

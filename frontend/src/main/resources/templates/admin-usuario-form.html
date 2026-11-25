@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/output.css" />
+    <title>Usuario - Ezur Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-50 min-h-screen flex">
+    <aside class="w-64 bg-gray-900 text-gray-300 flex flex-col shrink-0">
+      <div class="flex items-center gap-2 px-6 py-5 border-b border-gray-800">
+        <img src="/img/logo.jpg" alt="Ezur" class="w-8 h-8 rounded" />
+        <span class="font-sans font-semibold text-white text-sm">Ezur Admin</span>
+      </div>
+
+      <nav class="flex-1 px-3 py-4 space-y-1">
+        <a href="/admin" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm">Solicitudes</a>
+        <a href="/admin/mensajes" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm">Mensajes</a>
+        <a href="/admin/testimonios" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm">Testimonios</a>
+        <a href="/admin/usuarios" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-800 text-white text-sm font-medium">Usuarios</a>
+      </nav>
+
+      <div class="px-3 py-4 border-t border-gray-800">
+        <form th:action="@{/logout}" method="post">
+          <button type="submit" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm w-full text-left">
+            Cerrar sesión
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <main class="flex-1">
+      <header class="bg-gray-50 border-b border-gray-200 px-8 py-4">
+        <h1 class="text-lg font-semibold text-gray-900" th:text="${titulo}">Usuario</h1>
+      </header>
+
+      <div class="p-8 max-w-2xl">
+        <form
+          th:action="@{${accion}}"
+          th:object="${usuario}"
+          method="post"
+          class="bg-white rounded-xl border border-gray-200 p-6 space-y-5"
+        >
+          <div>
+            <label for="dni" class="block text-sm font-medium text-gray-700 mb-1">DNI</label>
+            <input
+              type="text"
+              id="dni"
+              th:field="*{dni}"
+              inputmode="numeric"
+              maxlength="8"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            />
+            <p th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="mt-1 text-xs text-red-600"></p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label for="nombres" class="block text-sm font-medium text-gray-700 mb-1">Nombres</label>
+              <input type="text" id="nombres" th:field="*{nombres}" maxlength="100" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+              <p th:if="${#fields.hasErrors('nombres')}" th:errors="*{nombres}" class="mt-1 text-xs text-red-600"></p>
+            </div>
+            <div>
+              <label for="apellidos" class="block text-sm font-medium text-gray-700 mb-1">Apellidos</label>
+              <input type="text" id="apellidos" th:field="*{apellidos}" maxlength="100" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+              <p th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}" class="mt-1 text-xs text-red-600"></p>
+            </div>
+          </div>
+
+          <div>
+            <label for="usuario" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
+            <input type="text" id="usuario" th:field="*{usuario}" maxlength="30" autocomplete="off" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            <p th:if="${#fields.hasErrors('usuario')}" th:errors="*{usuario}" class="mt-1 text-xs text-red-600"></p>
+          </div>
+
+          <div>
+            <label for="clave" class="block text-sm font-medium text-gray-700 mb-1">
+              <span th:text="${esNuevo} ? 'Clave' : 'Clave nueva (déjala vacía para no cambiarla)'">Clave</span>
+            </label>
+            <input type="password" id="clave" th:field="*{clave}" maxlength="72" autocomplete="new-password" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
+            <p th:if="${#fields.hasErrors('clave')}" th:errors="*{clave}" class="mt-1 text-xs text-red-600"></p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label for="perfil" class="block text-sm font-medium text-gray-700 mb-1">Perfil</label>
+              <select id="perfil" th:field="*{perfil}" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                <option th:each="p : ${perfiles}" th:value="${p}" th:text="${p.etiqueta}"></option>
+              </select>
+              <p th:if="${#fields.hasErrors('perfil')}" th:errors="*{perfil}" class="mt-1 text-xs text-red-600"></p>
+            </div>
+            <div>
+              <label for="estado" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+              <select id="estado" th:field="*{estado}" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                <option th:each="e : ${estados}" th:value="${e}" th:text="${e.etiqueta}"></option>
+              </select>
+              <p th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}" class="mt-1 text-xs text-red-600"></p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 pt-2">
+            <button type="submit" class="px-5 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800">Guardar</button>
+            <a href="/admin/usuarios" class="px-5 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>

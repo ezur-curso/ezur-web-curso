@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <th:block th:replace="~{fragments/layout :: cabecera('Ezur · Transporte y mudanzas', 'Mudanzas locales, nacionales e internacionales con seguro incluido. Pide tu presupuesto sin compromiso.')}"></th:block>
+    <link rel="stylesheet" href="/css/output.css" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="/css/ezur.css" th:href="@{/css/ezur.css}" />
+  </head>
+
+  <body>
+    <header th:replace="~{fragments/layout :: nav('inicio')}"></header>
+
+    <main>
+      <!-- Portada: el camión de Ezur se abre al hacer scroll -->
+      <section class="portada" aria-labelledby="titular" data-portada>
+        <div class="portada-escenario">
+          <div class="portada-titulo">
+            <h1 id="titular">Mudarte no debería sentirse <span class="marca">complicado</span></h1>
+            <p class="portada-sub">Abrimos las puertas, cargamos con cuidado y llegamos a tiempo.</p>
+          </div>
+
+          <div class="camion-zona">
+            <div class="camion" data-camion>
+              <div class="camion-caja">
+                <span class="bisagra bisagra-1" aria-hidden="true"></span>
+                <span class="bisagra bisagra-2" aria-hidden="true"></span>
+                <span class="bisagra bisagra-3" aria-hidden="true"></span>
+                <span class="bisagra bisagra-4" aria-hidden="true"></span>
+
+                <div class="camion-hueco">
+                  <img src="/img/galeria/mud4.png" th:src="@{/img/galeria/mud4.png}" alt="Interior de un camión de Ezur con cajas ordenadas y muebles protegidos" fetchpriority="high" />
+                  <span class="camion-luz" aria-hidden="true"></span>
+                </div>
+
+                <div class="camion-puertas" aria-hidden="true">
+                  <div class="puerta puerta-izq">
+                    <div class="puerta-cara puerta-frente">
+                      <div class="puerta-grafica">
+                        <img class="grafica-logo" src="/img/logo.jpg" th:src="@{/img/logo.jpg}" alt="" />
+                        <span class="grafica-web">ezur.example</span>
+                        <span class="grafica-banda"></span>
+                        <span class="grafica-marca"><strong>Ezur</strong><span>Transporte y mudanzas</span></span>
+                      </div>
+                      <span class="barra-cierre"></span><span class="barra-cierre"></span>
+                    </div>
+                    <div class="puerta-cara puerta-dorso"></div>
+                  </div>
+                  <div class="puerta puerta-der">
+                    <div class="puerta-cara puerta-frente">
+                      <div class="puerta-grafica">
+                        <img class="grafica-logo" src="/img/logo.jpg" th:src="@{/img/logo.jpg}" alt="" />
+                        <span class="grafica-web">ezur.example</span>
+                        <span class="grafica-banda"></span>
+                        <span class="grafica-marca"><strong>Ezur</strong><span>Transporte y mudanzas</span></span>
+                      </div>
+                      <span class="barra-cierre"></span><span class="barra-cierre"></span>
+                    </div>
+                    <div class="puerta-cara puerta-dorso"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="camion-paragolpes" aria-hidden="true">
+                <span class="piloto"></span><span class="matricula">EZ 2026</span><span class="piloto"></span>
+              </div>
+              <div class="camion-ruedas" aria-hidden="true"><span></span><span></span></div>
+            </div>
+            <div class="camion-sombra" aria-hidden="true"></div>
+          </div>
+
+          <div class="portada-velo" aria-hidden="true"></div>
+          <div class="portada-revelado">
+            <div>
+              <p class="revelado-titulo">Tú solo te preocupas de llegar</p>
+              <ul class="verificacion">
+                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Presupuesto gratis</li>
+                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Seguro incluido</li>
+                <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>15 años en ruta</li>
+              </ul>
+              <div class="mt-8 flex flex-wrap justify-center gap-3">
+                <a th:href="@{/cotizar}" class="boton boton-blanco">Pedir presupuesto <span class="flecha" aria-hidden="true">→</span></a>
+                <a th:href="@{/servicios}" class="boton boton-claro" style="color: #fff; border-color: rgba(255, 255, 255, 0.5)">Ver servicios</a>
+              </div>
+            </div>
+          </div>
+
+          <p class="portada-pista" aria-hidden="true"><i></i>Desliza para abrir</p>
+        </div>
+      </section>
+
+      <!-- Calculadora: ¿cuánto vas a mover? -->
+      <section class="seccion calculadora" aria-labelledby="calc-titulo" data-calculadora>
+        <div class="contenedor">
+          <div class="calc-cabecera">
+            <h2 id="calc-titulo" data-revelar>¿Cuánto vas a <span class="marca">mover</span>?</h2>
+            <p class="gris" data-revelar style="--i: 1">Elige el tamaño de tu casa y te decimos qué camión y cuánta gente necesitas.</p>
+          </div>
+
+          <div class="calc-opciones" role="radiogroup" aria-label="Tamaño de la mudanza" data-revelar style="--i: 2">
+            <button type="button" role="radio" aria-checked="false" class="calc-opcion" data-tam="estudio" data-m3="8" data-equipo="2" data-horas="2–3 h" data-cajas="10" data-tipo="Mudanza Local" data-nombre="Estudio">Estudio</button>
+            <button type="button" role="radio" aria-checked="true" class="calc-opcion" data-tam="piso2" data-m3="16" data-equipo="2" data-horas="3–5 h" data-cajas="25" data-tipo="Mudanza Local" data-nombre="Piso de 1 o 2 habitaciones">Piso 1–2 hab.</button>
+            <button type="button" role="radio" aria-checked="false" class="calc-opcion" data-tam="piso3" data-m3="25" data-equipo="3" data-horas="5–7 h" data-cajas="40" data-tipo="Mudanza Local" data-nombre="Piso de 3 habitaciones">Piso 3 hab.</button>
+            <button type="button" role="radio" aria-checked="false" class="calc-opcion" data-tam="casa" data-m3="35" data-equipo="4" data-horas="1 día" data-cajas="60" data-tipo="Mudanza Local" data-nombre="Casa de 4 o más habitaciones">Casa 4+ hab.</button>
+            <button type="button" role="radio" aria-checked="false" class="calc-opcion" data-tam="oficina" data-m3="20" data-equipo="3" data-horas="Fuera de horario" data-cajas="35" data-tipo="Oficina / Comercio" data-nombre="Oficina">Oficina</button>
+          </div>
+
+          <div class="calc-resultado" data-revelar="zoom" style="--i: 3">
+            <!-- Camión de perfil que se llena según el tamaño elegido -->
+            <div class="calc-camion" aria-hidden="true">
+              <svg viewBox="0 0 520 210" focusable="false">
+                <defs>
+                  <clipPath id="carga-recorte"><rect x="22" y="26" width="300" height="128" rx="4" /></clipPath>
+                </defs>
+                <rect x="16" y="20" width="312" height="140" rx="10" fill="#fff" stroke="#0d2240" stroke-width="4" />
+                <text x="172" y="96" text-anchor="middle" class="calc-camion-marca">Ezur</text>
+                <g clip-path="url(#carga-recorte)">
+                  <g class="calc-cajas" data-cajas-grupo>
+                    <rect x="26" y="112" width="44" height="40" rx="3" /><rect x="74" y="112" width="44" height="40" rx="3" /><rect x="26" y="68" width="44" height="40" rx="3" />
+                    <rect x="122" y="112" width="44" height="40" rx="3" /><rect x="74" y="68" width="44" height="40" rx="3" /><rect x="26" y="30" width="44" height="34" rx="3" />
+                    <rect x="170" y="112" width="44" height="40" rx="3" /><rect x="122" y="68" width="44" height="40" rx="3" /><rect x="74" y="30" width="44" height="34" rx="3" />
+                    <rect x="218" y="112" width="44" height="40" rx="3" /><rect x="170" y="68" width="44" height="40" rx="3" /><rect x="122" y="30" width="44" height="34" rx="3" />
+                    <rect x="266" y="112" width="52" height="40" rx="3" /><rect x="218" y="68" width="44" height="40" rx="3" /><rect x="170" y="30" width="44" height="34" rx="3" />
+                    <rect x="266" y="68" width="52" height="40" rx="3" /><rect x="218" y="30" width="44" height="34" rx="3" /><rect x="266" y="30" width="52" height="34" rx="3" />
+                  </g>
+                </g>
+                <path d="M328 62h86c10 0 16 4 22 12l38 48c4 5 6 10 6 16v22H328z" fill="#1a67d1" stroke="#0d2240" stroke-width="4" stroke-linejoin="round" />
+                <path d="M346 78h64c6 0 10 3 13 7l24 31h-101z" fill="#e8f1fd" stroke="#0d2240" stroke-width="3" stroke-linejoin="round" />
+                <rect x="10" y="160" width="476" height="14" rx="5" fill="#0d2240" />
+                <circle cx="96" cy="176" r="24" fill="#0d2240" /><circle cx="96" cy="176" r="10" fill="#c3cfe2" />
+                <circle cx="404" cy="176" r="24" fill="#0d2240" /><circle cx="404" cy="176" r="10" fill="#c3cfe2" />
+              </svg>
+            </div>
+
+            <dl class="calc-datos">
+              <div><dt>Camión</dt><dd><span data-salida="m3">16</span> m³</dd></div>
+              <div><dt>Equipo</dt><dd><span data-salida="equipo">2</span> personas</dd></div>
+              <div><dt>Duración</dt><dd data-salida="horas">3–5 h</dd></div>
+              <div><dt>Cajas</dt><dd>~<span data-salida="cajas">25</span></dd></div>
+            </dl>
+          </div>
+
+          <form th:action="@{/cotizar}" method="get" class="calc-form" data-revelar style="--i: 4">
+            <input type="hidden" name="tipo" value="Mudanza Local" data-campo="tipo" />
+            <input type="hidden" name="detalle" value="" data-campo="detalle" />
+            <div>
+              <label for="origen">Desde</label>
+              <input id="origen" name="origen" type="text" maxlength="200" placeholder="Dirección de origen" class="campo" autocomplete="off" />
+            </div>
+            <div>
+              <label for="destino">Hasta</label>
+              <input id="destino" name="destino" type="text" maxlength="200" placeholder="Dirección de destino" class="campo" autocomplete="off" />
+            </div>
+            <button type="submit" class="boton">Pedir presupuesto <span class="flecha" aria-hidden="true">→</span></button>
+          </form>
+          <p class="calc-nota">Estimación orientativa. El presupuesto final depende del inventario y de los accesos.</p>
+        </div>
+      </section>
+
+      <!-- Servicios: lista con foto que sigue al cursor -->
+      <section class="seccion fondo-suave" aria-labelledby="servicios-titulo" data-indice>
+        <div class="contenedor">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <h2 id="servicios-titulo" data-revelar>Un equipo, cuatro formas de mudarte</h2>
+            <a th:href="@{/servicios}" class="enlace" data-revelar style="--i: 1">Todos los servicios <span aria-hidden="true">→</span></a>
+          </div>
+
+          <ol class="indice">
+            <li data-revelar style="--i: 0">
+              <a th:href="@{/servicios#local}" data-foto="/img/galeria/mud4.png">
+                <span class="indice-num">01</span>
+                <span class="indice-nombre">Mudanza local</span>
+                <span class="indice-desc">Dentro de tu ciudad, en un día.</span>
+                <img src="/img/galeria/mud4.png" th:src="@{/img/galeria/mud4.png}" alt="" class="indice-mini" loading="lazy" />
+              </a>
+            </li>
+            <li data-revelar style="--i: 1">
+              <a th:href="@{/servicios#internacional}" data-foto="/img/galeria/mud5.png">
+                <span class="indice-num">02</span>
+                <span class="indice-nombre">Internacional</span>
+                <span class="indice-desc">Aduana resuelta, de puerta a puerta.</span>
+                <img src="/img/galeria/mud5.png" th:src="@{/img/galeria/mud5.png}" alt="" class="indice-mini" loading="lazy" />
+              </a>
+            </li>
+            <li data-revelar style="--i: 2">
+              <a th:href="@{/servicios#montaje}" data-foto="/img/galeria/mud1.png">
+                <span class="indice-num">03</span>
+                <span class="indice-nombre">Montaje y desmontaje</span>
+                <span class="indice-desc">Cada tornillo vuelve a su sitio.</span>
+                <img src="/img/galeria/mud1.png" th:src="@{/img/galeria/mud1.png}" alt="" class="indice-mini" loading="lazy" />
+              </a>
+            </li>
+            <li data-revelar style="--i: 3">
+              <a th:href="@{/servicios#oficinas}" data-foto="/img/galeria/mud2.png">
+                <span class="indice-num">04</span>
+                <span class="indice-nombre">Oficinas</span>
+                <span class="indice-desc">Tu negocio para lo mínimo.</span>
+                <img src="/img/galeria/mud2.png" th:src="@{/img/galeria/mud2.png}" alt="" class="indice-mini" loading="lazy" />
+              </a>
+            </li>
+          </ol>
+        </div>
+        <div class="indice-flotante" aria-hidden="true" data-flotante><img src="/img/galeria/mud4.png" th:src="@{/img/galeria/mud4.png}" alt="" /></div>
+      </section>
+
+      <!-- Comparativa: por tu cuenta o con Ezur -->
+      <section class="seccion" aria-labelledby="comparativa-titulo">
+        <div class="contenedor">
+          <h2 id="comparativa-titulo" class="max-w-2xl" data-revelar>Mudarte por tu cuenta <span class="gris">o</span> con <span class="marca">Ezur</span></h2>
+
+          <div class="comparativa" role="table" aria-label="Comparativa entre mudarte por tu cuenta y con Ezur">
+            <div class="comp-fila comp-cabeza" role="row">
+              <span role="columnheader"></span>
+              <span role="columnheader">Por tu cuenta</span>
+              <span role="columnheader" class="comp-ezur">Con Ezur</span>
+            </div>
+            <div class="comp-fila" role="row" data-revelar style="--i: 0">
+              <span role="rowheader">Transporte</span>
+              <span role="cell">Alquilar furgoneta, conducirla y devolverla</span>
+              <span role="cell" class="comp-ezur">Camión propio con conductor</span>
+            </div>
+            <div class="comp-fila" role="row" data-revelar style="--i: 1">
+              <span role="rowheader">Embalaje</span>
+              <span role="cell">Comprar cajas, cinta y film</span>
+              <span role="cell" class="comp-ezur">Material incluido</span>
+            </div>
+            <div class="comp-fila" role="row" data-revelar style="--i: 2">
+              <span role="rowheader">Carga</span>
+              <span role="cell">Amigos, escaleras y espalda</span>
+              <span role="cell" class="comp-ezur">Equipo profesional</span>
+            </div>
+            <div class="comp-fila" role="row" data-revelar style="--i: 3">
+              <span role="rowheader">Muebles</span>
+              <span role="cell">Desmontar sin instrucciones</span>
+              <span role="cell" class="comp-ezur">Desmontaje y montaje incluidos</span>
+            </div>
+            <div class="comp-fila" role="row" data-revelar style="--i: 4">
+              <span role="rowheader">Si algo se rompe</span>
+              <span role="cell">Lo pagas tú</span>
+              <span role="cell" class="comp-ezur">Seguro de responsabilidad civil</span>
+            </div>
+            <div class="comp-fila" role="row" data-revelar style="--i: 5">
+              <span role="rowheader">Tu tiempo</span>
+              <span role="cell">Un fin de semana entero</span>
+              <span role="cell" class="comp-ezur">Te dedicas a lo tuyo</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cómo se hace tu mudanza: la furgoneta recorre los cuatro pasos -->
+      <section class="recorrido" aria-labelledby="proceso-titulo" data-recorrido>
+        <div class="recorrido-escenario">
+          <div class="contenedor">
+            <div class="recorrido-cabecera">
+              <div>
+                <h2 id="proceso-titulo">Así se hace tu mudanza</h2>
+                <p>De tu primer mensaje a la última caja en su sitio.</p>
+              </div>
+              <p class="recorrido-contador" aria-hidden="true">Paso <span data-paso-actual>1</span> de 4</p>
+            </div>
+
+            <div class="recorrido-mapa" aria-hidden="true">
+              <svg viewBox="0 0 1200 190" focusable="false">
+                <path class="via-base" d="M 20 120 C 120 120, 120 60, 230 60 S 360 130, 470 120 S 620 52, 750 60 S 900 140, 1040 118 S 1160 80, 1185 82" />
+                <path class="via-guia" data-via d="M 20 120 C 120 120, 120 60, 230 60 S 360 130, 470 120 S 620 52, 750 60 S 900 140, 1040 118 S 1160 80, 1185 82" />
+                <path class="via-trazo" data-trazo d="M 20 120 C 120 120, 120 60, 230 60 S 360 130, 470 120 S 620 52, 750 60 S 900 140, 1040 118 S 1160 80, 1185 82" />
+                <circle class="parada" data-parada r="13" cx="150" cy="80" />
+                <circle class="parada" data-parada r="13" cx="450" cy="120" />
+                <circle class="parada" data-parada r="13" cx="750" cy="60" />
+                <circle class="parada" data-parada r="13" cx="1050" cy="118" />
+                <g data-furgo transform="translate(20 120)">
+                  <g transform="translate(-30 -38)">
+                    <rect x="2" y="6" width="38" height="24" rx="3" fill="#1a67d1" stroke="#fff" stroke-width="2.5" />
+                    <path d="M40 13h11l7 8v9H40z" fill="#fff" stroke="#fff" stroke-width="2" stroke-linejoin="round" />
+                    <path d="M43 16h7l4 5h-11z" fill="#0d2240" />
+                    <circle cx="13" cy="31" r="5" fill="#0d2240" stroke="#fff" stroke-width="2.5" />
+                    <circle cx="48" cy="31" r="5" fill="#0d2240" stroke="#fff" stroke-width="2.5" />
+                  </g>
+                </g>
+              </svg>
+            </div>
+
+            <ol class="recorrido-pasos">
+              <li class="paso" data-paso>
+                <span class="paso-num">01</span>
+                <h3>Pides tu presupuesto</h3>
+                <p>Nos cuentas qué mueves y de dónde a dónde.</p>
+                <span class="paso-chip">2 minutos</span>
+              </li>
+              <li class="paso" data-paso>
+                <span class="paso-num">02</span>
+                <h3>Coordinamos los detalles</h3>
+                <p>Fecha, horarios, accesos y necesidades especiales.</p>
+                <span class="paso-chip">Respuesta en 24 h</span>
+              </li>
+              <li class="paso" data-paso>
+                <span class="paso-num">03</span>
+                <h3>Embalamos y cargamos</h3>
+                <p>Mantas, film y cada mueble calzado en el camión.</p>
+                <span class="paso-chip">El día acordado</span>
+              </li>
+              <li class="paso" data-paso>
+                <span class="paso-num">04</span>
+                <h3>Entregamos y montamos</h3>
+                <p>Descargamos, montamos y retiramos el embalaje.</p>
+                <span class="paso-chip">Listo para vivir</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- Opiniones: nota media y muro de opiniones en movimiento -->
+      <section class="seccion opiniones-seccion" aria-labelledby="opiniones-titulo">
+        <div class="contenedor opiniones-rejilla">
+          <div class="opiniones-resumen" data-revelar>
+            <h2 id="opiniones-titulo">Lo que dicen quienes ya se mudaron</h2>
+            <th:block th:if="${totalOpiniones > 0}">
+              <p class="nota-media"><span class="tabular" th:text="${promedioOpiniones}">4,8</span><small>/ 5</small></p>
+              <p class="nota-estrellas azul" aria-hidden="true">
+                <svg th:each="n : ${#numbers.sequence(1, 5)}" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.2 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+              </p>
+              <p class="gris" th:text="${totalOpiniones == 1 ? 'Basado en 1 opinión de clientes' : 'Basado en ' + totalOpiniones + ' opiniones de clientes'}">Basado en 2 opiniones</p>
+            </th:block>
+            <p th:if="${totalOpiniones == 0}" class="gris">Pronto compartiremos aquí las opiniones de nuestros clientes.</p>
+          </div>
+
+          <div th:if="${totalOpiniones > 0}" class="muro" th:classappend="${totalOpiniones < 3} ? 'muro-quieto'" aria-label="Opiniones de clientes">
+            <div class="muro-columna">
+              <div class="muro-pista">
+                <figure th:each="t : ${testimonios}" class="opinion">
+                  <blockquote th:text="${t.texto}">Texto</blockquote>
+                  <figcaption><strong th:text="${t.nombre}">Nombre</strong><span th:if="${t.servicio != null and !t.servicio.isBlank()}" th:text="${t.servicio}">Servicio</span></figcaption>
+                </figure>
+                <th:block th:if="${totalOpiniones >= 3}">
+                  <figure th:each="t : ${testimonios}" class="opinion" aria-hidden="true">
+                    <blockquote th:text="${t.texto}">Texto</blockquote>
+                    <figcaption><strong th:text="${t.nombre}">Nombre</strong><span th:if="${t.servicio != null and !t.servicio.isBlank()}" th:text="${t.servicio}">Servicio</span></figcaption>
+                  </figure>
+                </th:block>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preguntas en formato conversación -->
+      <section class="seccion fondo-suave" aria-labelledby="faq-titulo">
+        <div class="contenedor chat-rejilla">
+          <div data-revelar>
+            <h2 id="faq-titulo">Pregúntanos lo que quieras</h2>
+            <p class="mt-4 gris">Estas son las dudas más habituales. Si la tuya no está, escríbenos.</p>
+            <a th:href="@{/contacto}" class="enlace mt-5">Hablar con una persona <span aria-hidden="true">→</span></a>
+          </div>
+
+          <div class="chat" data-chat data-revelar style="--i: 1">
+            <div class="chat-cabeza">
+              <img src="/img/logo.jpg" th:src="@{/img/logo.jpg}" alt="" />
+              <div><strong>Equipo Ezur</strong><span><i></i>Responde en minutos</span></div>
+            </div>
+            <div class="chat-hilo" data-hilo aria-live="polite">
+              <p class="burbuja burbuja-ezur">Hola, somos el equipo de Ezur. ¿Qué te gustaría saber?</p>
+            </div>
+            <div class="chat-opciones" data-opciones>
+              <button type="button" data-respuesta="Depende del volumen, pero la mayoría de mudanzas locales se completan en un solo día.">¿Cuánto tarda una mudanza local?</button>
+              <button type="button" data-respuesta="Nada: el presupuesto es gratis y sin compromiso.">¿El presupuesto tiene costo?</button>
+              <button type="button" data-respuesta="Sí, todas las mudanzas incluyen seguro de responsabilidad civil.">¿Mis cosas van aseguradas?</button>
+              <button type="button" data-respuesta="Sí, hacemos mudanzas internacionales y nos encargamos de la aduana.">¿Hacen mudanzas fuera del país?</button>
+              <button type="button" data-respuesta="Sí, el embalaje profesional se puede contratar por separado.">¿Puedo contratar solo el embalaje?</button>
+            </div>
+            <!-- Sin JavaScript se muestran todas las respuestas -->
+            <dl class="chat-estatico">
+              <dt>¿Cuánto tarda una mudanza local?</dt><dd>Depende del volumen, pero la mayoría se completan en un solo día.</dd>
+              <dt>¿El presupuesto tiene costo?</dt><dd>Nada: es gratis y sin compromiso.</dd>
+              <dt>¿Mis cosas van aseguradas?</dt><dd>Sí, con seguro de responsabilidad civil.</dd>
+              <dt>¿Hacen mudanzas fuera del país?</dt><dd>Sí, y nos encargamos de la aduana.</dd>
+              <dt>¿Puedo contratar solo el embalaje?</dt><dd>Sí, se puede contratar por separado.</dd>
+            </dl>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: pie}"></footer>
+    <th:block th:replace="~{fragments/layout :: menuJs}"></th:block>
+  </body>
+</html>

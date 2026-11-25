@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/output.css" />
+    <title>Panel Administrativo - Ezur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-50 min-h-screen flex">
+    <aside class="w-64 bg-gray-900 text-gray-300 flex flex-col shrink-0">
+      <div class="flex items-center gap-2 px-6 py-5 border-b border-gray-800">
+        <img src="/img/logo.jpg" alt=" Ezur" class="w-8 h-8 rounded" />
+        <span class="font-sans font-semibold text-white text-sm"
+          >Ezur Admin</span
+        >
+      </div>
+
+      <nav class="flex-1 px-3 py-4 space-y-1">
+        <a
+          href="/admin"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm"
+          >Solicitudes</a
+        >
+        <a
+          href="/admin/mensajes"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-800 text-white text-sm font-medium"
+          >Mensajes</a
+        >
+        <a
+          href="/admin/testimonios"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm"
+          >Testimonios</a
+        >
+        <a
+          href="/admin/usuarios"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm"
+          >Usuarios</a
+        >
+        <a
+          href="#"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm"
+          >Configuracion</a
+        >
+      </nav>
+
+      <div class="px-3 py-4 border-t border-gray-800">
+        <form th:action="@{/logout}" method="post">
+          <button
+            type="submit"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm w-full text-left"
+          >
+            Cerrar sesión
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <main class="flex-1">
+      <header
+        class="bg-gray-50 border-b border-gray-200 px-8 py-4 flex items-center justify-between"
+      >
+        <h1 class="text-lg font-semibold text-gray-900">
+          Solicitud de Presupuestos
+        </h1>
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <div
+            class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-medium"
+          >
+            A
+          </div>
+          Admin
+        </div>
+      </header>
+
+      <div
+        th:if="${eliminado}"
+        class="mb-6 rounded-lg bg-green-50 px-4 py-3 text-sm font-medium text-green-700"
+      >
+        El mensaje se eliminó correctamente.
+      </div>
+
+      <div class="p-8">
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-500 text-xs uppercase text-left">
+              <tr>
+                <th class="px-6 py-3 font-medium">Nombre</th>
+                <th class="px-6 py-3 font-medium">Asunto</th>
+                <th class="px-6 py-3 font-medium">Mensaje</th>
+                <th class="px-6 py-3 font-medium">Fecha</th>
+                <th class="px-6 py-3 font-medium">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr th:each="m : ${mensajes}" class="hover:bg-gray-50">
+                <td class="px-6 py-4">
+                  <p class="font-medium text-gray-900" th:text="${m.nombre}">
+                    Nombre
+                  </p>
+                  <p class="text-gray-500 text-xs" th:text="${m.email}">
+                    correo
+                  </p>
+                </td>
+                <td class="px-6 py-4 text-gray-600" th:text="${m.asunto}">
+                  Asunto
+                </td>
+                <td
+                  class="px-6 py-4 text-gray-600 max-w-xs truncate"
+                  th:text="${m.mensaje}"
+                >
+                  Mensaje
+                </td>
+                <td
+                  class="px-6 py-4 text-gray-600"
+                  th:text="${#temporals.format(m.fechaCreacion, 'dd MMM, yyyy')}"
+                >
+                  Fecha
+                </td>
+                <td class="px-6 py-4">
+                  <form
+                    th:action="@{/admin/mensajes/{id}/eliminar(id=${m.id})}"
+                    method="post"
+                    th:attr="data-nombre=${m.nombre}"
+                    class="form-eliminar"
+                  >
+                    <button
+                      type="submit"
+                      class="text-red-600 hover:text-red-700 text-xs font-medium"
+                    >
+                      Eliminar
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    <script>
+      document.querySelectorAll(".form-eliminar").forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+          const nombre = form.dataset.nombre;
+          if (
+            !confirm(
+              "¿Eliminar el mensaje de " +
+                nombre +
+                "? Esta acción no se puede deshacer.",
+            )
+          ) {
+            e.preventDefault();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

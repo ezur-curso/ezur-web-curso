@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <th:block th:replace="~{fragments/layout :: cabecera('Nosotros · Ezur', 'Conoce al equipo de Ezur, nuestra historia y cómo trabajamos el día de tu mudanza.')}"></th:block>
+    <link rel="stylesheet" href="/css/output.css" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="/css/ezur.css" th:href="@{/css/ezur.css}" />
+  </head>
+
+  <body>
+    <header th:replace="~{fragments/layout :: nav('nosotros')}"></header>
+
+    <main>
+      <!-- Presentación con palabra que cambia -->
+      <section aria-labelledby="titular" style="padding-block: clamp(3.5rem, 9vw, 7rem) clamp(2.5rem, 5vw, 4rem)">
+        <div class="contenedor">
+          <h1 id="titular" class="max-w-5xl">
+            <span class="linea"><span style="--i: 0">Llevamos</span></span>
+            <span class="linea"><span style="--i: 1"><span class="rotador" data-rotador aria-hidden="true"><span class="marca">casas</span><span class="marca">oficinas</span><span class="marca">pianos</span><span class="marca">recuerdos</span></span><span class="sr-only-ez">casas, oficinas, pianos y recuerdos</span></span></span>
+            <span class="linea"><span style="--i: 2">a su nuevo destino</span></span>
+          </h1>
+          <p class="entra mt-7 max-w-xl text-lg gris" style="--i: 3">
+            Somos un equipo de transporte y mudanzas con camiones propios. Desde hace quince años, hacemos que mudarse sea lo más sencillo del cambio.
+          </p>
+        </div>
+      </section>
+
+      <!-- Historia: línea de tiempo horizontal -->
+      <section class="historia" aria-labelledby="historia-titulo" data-historia>
+        <div class="historia-escenario">
+          <div class="contenedor">
+            <h2 id="historia-titulo">Nuestra ruta hasta hoy</h2>
+            <p class="mt-3 text-sm" style="color: #a9bbd6">Historia de ejemplo para el proyecto académico.</p>
+          </div>
+          <ol class="historia-pista" data-pista>
+            <li class="hito">
+              <span class="hito-anio">2011</span>
+              <h3>Una furgoneta y dos personas</h3>
+              <p>Las primeras mudanzas, de barrio en barrio.</p>
+            </li>
+            <li class="hito hito-foto">
+              <img src="/img/galeria/mud4.png" th:src="@{/img/galeria/mud4.png}" alt="Cajas ordenadas dentro del camión" style="object-position: 50% 62%" loading="lazy" />
+            </li>
+            <li class="hito">
+              <span class="hito-anio">2015</span>
+              <h3>Primer camión propio</h3>
+              <p>Pasamos de pisos pequeños a casas completas.</p>
+            </li>
+            <li class="hito">
+              <span class="hito-anio">2018</span>
+              <h3>Cruzamos la frontera</h3>
+              <p>Primeras mudanzas internacionales con aduana incluida.</p>
+            </li>
+            <li class="hito hito-foto">
+              <img src="/img/galeria/mud5.png" th:src="@{/img/galeria/mud5.png}" alt="Valle alpino, uno de los destinos internacionales" loading="lazy" />
+            </li>
+            <li class="hito">
+              <span class="hito-anio">2021</span>
+              <h3>Oficinas y comercios</h3>
+              <p>Traslados de empresas, de noche y en fin de semana.</p>
+            </li>
+            <li class="hito">
+              <span class="hito-anio">2026</span>
+              <h3>Tu mudanza, en línea</h3>
+              <p>Área de clientes para seguir cada solicitud paso a paso.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Un día de mudanza, hora a hora -->
+      <section class="seccion" aria-labelledby="dia-titulo" data-jornada>
+        <div class="contenedor jornada-rejilla">
+          <div class="jornada-intro">
+            <h2 id="dia-titulo" data-revelar>Un día de mudanza con Ezur</h2>
+            <p class="mt-4 gris" data-revelar style="--i: 1">Así se reparte la jornada en un piso de tres habitaciones.</p>
+          </div>
+          <ol class="jornada">
+            <li class="jornada-paso"><time>08:00</time><div><h3>Llegamos y protegemos</h3><p>Suelos, puertas y ascensor cubiertos antes de tocar nada.</p></div></li>
+            <li class="jornada-paso"><time>08:30</time><div><h3>Desmontamos y embalamos</h3><p>Cada herraje en su bolsa y cada caja rotulada por estancia.</p></div></li>
+            <li class="jornada-paso"><time>11:00</time><div><h3>Cargamos el camión</h3><p>Lo pesado abajo, lo frágil arriba y todo bien calzado.</p></div></li>
+            <li class="jornada-paso"><time>13:00</time><div><h3>En ruta</h3><p>Te avisamos cuando salimos y cuando estamos cerca.</p></div></li>
+            <li class="jornada-paso"><time>14:30</time><div><h3>Descargamos por estancias</h3><p>Cada caja va directa a la habitación que pone en su etiqueta.</p></div></li>
+            <li class="jornada-paso"><time>17:00</time><div><h3>Montamos y recogemos</h3><p>Muebles montados y embalaje fuera. Ya puedes cenar en casa.</p></div></li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Reglas de la casa -->
+      <section class="seccion fondo-suave" aria-labelledby="reglas-titulo">
+        <div class="contenedor">
+          <h2 id="reglas-titulo" data-revelar>Nuestras reglas</h2>
+          <ol class="reglas">
+            <li data-revelar>Si se mueve, se protege.</li>
+            <li data-revelar style="--i: 1">Llegamos a la hora acordada.</li>
+            <li data-revelar style="--i: 2">El precio no cambia el día de la mudanza.</li>
+            <li data-revelar style="--i: 3">Ningún mueble se queda desmontado.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Equipo -->
+      <section class="seccion" aria-labelledby="equipo-titulo">
+        <div class="contenedor">
+          <div class="flex flex-wrap items-end justify-between gap-3">
+            <h2 id="equipo-titulo" data-revelar>Quién está detrás</h2>
+            <p class="text-sm gris" data-revelar style="--i: 1">Equipo de ejemplo para el proyecto académico.</p>
+          </div>
+          <ul class="equipo">
+            <li data-revelar style="--i: 0">
+              <img src="/img/equipo/Carlos.png" th:src="@{/img/equipo/Carlos.png}" alt="" loading="lazy" />
+              <h3>Carlos Mendoza</h3>
+              <p class="rol">Fundador</p>
+              <p class="tarea">Revisa cada presupuesto antes de que salga.</p>
+            </li>
+            <li data-revelar style="--i: 1">
+              <img src="/img/equipo/sofia.png" th:src="@{/img/equipo/sofia.png}" alt="" loading="lazy" />
+              <h3>Sofía Rossi</h3>
+              <p class="rol">Atención al cliente</p>
+              <p class="tarea">Es la voz que te responde y te avisa en ruta.</p>
+            </li>
+            <li data-revelar style="--i: 2">
+              <img src="/img/equipo/mateo.png" th:src="@{/img/equipo/mateo.png}" alt="" loading="lazy" />
+              <h3>Mateo Silva</h3>
+              <p class="rol">Logística</p>
+              <p class="tarea">Decide qué camión sale y por qué ruta.</p>
+            </li>
+            <li data-revelar style="--i: 3">
+              <img src="/img/equipo/Laura.png" th:src="@{/img/equipo/Laura.png}" alt="" loading="lazy" />
+              <h3>Laura Benítez</h3>
+              <p class="rol">Operaciones</p>
+              <p class="tarea">Coordina al equipo el día de la mudanza.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: pie}"></footer>
+    <th:block th:replace="~{fragments/layout :: menuJs}"></th:block>
+  </body>
+</html>

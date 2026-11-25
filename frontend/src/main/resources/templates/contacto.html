@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <th:block th:replace="~{fragments/layout :: cabecera('Contacto · Ezur', 'Escríbenos o llámanos: te respondemos lo antes posible.')}"></th:block>
+    <link rel="stylesheet" href="/css/output.css" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="/css/ezur.css" th:href="@{/css/ezur.css}" />
+  </head>
+
+  <body>
+    <header th:replace="~{fragments/layout :: nav('contacto')}"></header>
+
+    <main class="grid lg:grid-cols-[5fr_7fr]" style="min-height: calc(100vh - 4.5rem)">
+      <!-- Datos de contacto -->
+      <section class="fondo-suave" aria-labelledby="titular" style="padding: clamp(3rem, 7vw, 6rem) clamp(1.25rem, 5vw, 4rem)">
+        <div class="mx-auto max-w-md lg:ml-auto lg:mr-0">
+          <h1 id="titular" style="font-size: clamp(2.3rem, 4.4vw, 3.4rem)">
+            <span class="linea"><span style="--i: 0">Conversemos</span></span>
+            <span class="linea"><span style="--i: 1">sobre <span class="marca">tu mudanza</span></span></span>
+          </h1>
+          <p class="entra mt-5 gris" style="--i: 2">Escríbenos o llámanos: respondemos lo antes posible.</p>
+
+          <dl class="mt-10 grid gap-7" style="margin-bottom: 0">
+            <div data-revelar style="--i: 0">
+              <dt class="text-sm font-semibold gris">Teléfono</dt>
+              <dd class="m-0 mt-1"><a th:href="${'tel:' + (empresa?.telefonoEnlace ?: '+34900000000')}" class="tabular no-underline hover:text-[var(--azul)]" style="font-family: var(--titulos); font-weight: 700; font-size: 1.7rem; letter-spacing: -0.02em" th:text="${empresa?.telefono ?: '+34 900 000 000'}">+34 900 000 000</a></dd>
+            </div>
+            <div data-revelar style="--i: 1">
+              <dt class="text-sm font-semibold gris">Correo</dt>
+              <dd class="m-0 mt-1"><a th:href="${'mailto:' + (empresa?.email ?: 'hola@ezur.example')}" class="break-all text-lg font-medium no-underline hover:text-[var(--azul)]" th:text="${empresa?.email ?: 'hola@ezur.example'}">hola@ezur.example</a></dd>
+            </div>
+            <div data-revelar style="--i: 2">
+              <dt class="text-sm font-semibold gris">Oficina</dt>
+              <dd class="m-0 mt-1 text-lg" th:text="${empresa?.direccion ?: 'Calle Ejemplo 123, 08000 Ciudad Ejemplo'}">Calle Ejemplo 123, 08000 Ciudad Ejemplo</dd>
+            </div>
+            <div data-revelar style="--i: 3">
+              <dt class="flex flex-wrap items-center justify-between gap-3 text-sm font-semibold gris">
+                Horario de atención
+                <span data-abierto hidden class="inline-flex items-center gap-2 text-sm font-semibold" aria-live="polite"></span>
+              </dt>
+              <dd class="m-0 mt-2 tabular">
+                <div class="flex justify-between gap-4 py-1.5"><span>Lunes a viernes</span><span class="gris">8:00 – 21:00</span></div>
+                <div class="flex justify-between gap-4 py-1.5" style="border-top: 1px solid var(--linea)"><span>Sábado</span><span class="gris">10:00 – 20:00</span></div>
+                <div class="flex justify-between gap-4 py-1.5" style="border-top: 1px solid var(--linea)"><span>Domingo</span><span class="gris">10:00 – 17:00</span></div>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- Formulario -->
+      <section aria-labelledby="form-titulo" style="padding: clamp(3rem, 7vw, 6rem) clamp(1.25rem, 5vw, 4rem)">
+        <div class="mx-auto max-w-xl lg:ml-0 lg:mr-auto">
+          <h2 id="form-titulo" style="font-size: clamp(1.7rem, 3vw, 2.3rem)" data-revelar>Envíanos un mensaje</h2>
+
+          <form th:action="@{/contacto}" th:object="${contacto}" method="post" class="mt-8 grid gap-5" data-revelar style="--i: 1">
+            <div th:if="${exito}" data-aviso role="status" class="aviso aviso-ok">
+              <p><strong>¡Enviado correctamente!</strong></p>
+              <p>Hemos recibido tu mensaje y te contactaremos lo antes posible.</p>
+            </div>
+            <div th:if="${#fields.hasErrors('*')}" data-aviso role="alert" class="aviso aviso-error">
+              <p><strong>Revisa los campos marcados e inténtalo de nuevo.</strong></p>
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="campo-grupo">
+                <label for="nombre" class="campo-etiqueta">Nombre completo</label>
+                <input type="text" id="nombre" th:field="*{nombre}" required maxlength="100" autocomplete="name" class="campo" />
+                <p th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="campo-error"></p>
+              </div>
+              <div class="campo-grupo">
+                <label for="email" class="campo-etiqueta">Correo electrónico</label>
+                <input type="email" id="email" th:field="*{email}" required maxlength="150" autocomplete="email" class="campo" />
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="campo-error"></p>
+              </div>
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="campo-grupo">
+                <label for="telefono" class="campo-etiqueta">Teléfono</label>
+                <input type="tel" id="telefono" th:field="*{telefono}" maxlength="30" autocomplete="tel" class="campo" />
+                <p th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}" class="campo-error"></p>
+              </div>
+              <div class="campo-grupo">
+                <label for="asunto" class="campo-etiqueta">Asunto</label>
+                <select id="asunto" th:field="*{asunto}" class="campo">
+                  <option value="">Selecciona una opción</option>
+                  <option value="Consulta General">Consulta general</option>
+                  <option value="Reclamo o incidencia">Reclamo o incidencia</option>
+                  <option value="Trabaja con Nosotros">Trabaja con nosotros</option>
+                </select>
+                <p th:if="${#fields.hasErrors('asunto')}" th:errors="*{asunto}" class="campo-error"></p>
+              </div>
+            </div>
+
+            <div class="campo-grupo">
+              <label for="mensaje" class="campo-etiqueta">Mensaje</label>
+              <textarea id="mensaje" th:field="*{mensaje}" rows="5" required placeholder="Escribe aquí tu mensaje" class="campo"></textarea>
+              <p th:if="${#fields.hasErrors('mensaje')}" th:errors="*{mensaje}" class="campo-error"></p>
+            </div>
+
+            <div>
+              <div class="casilla-privacidad">
+                <input type="checkbox" th:field="*{aceptaPrivacidad}" id="consentimiento" required />
+                <label for="consentimiento">
+                  He leído y acepto la
+                  <a th:href="@{/politica-privacidad}" target="_blank" rel="noopener" class="font-semibold underline">política de privacidad</a>
+                </label>
+              </div>
+              <p th:if="${#fields.hasErrors('aceptaPrivacidad')}" th:errors="*{aceptaPrivacidad}" class="campo-error mt-1"></p>
+            </div>
+
+            <button type="submit" class="boton w-full sm:w-auto sm:justify-self-start">Enviar mensaje</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: pie}"></footer>
+    <th:block th:replace="~{fragments/layout :: menuJs}"></th:block>
+    <script th:src="@{/js/evitar-doble-envio.js}" defer></script>
+    <script th:src="@{/js/aviso-formulario.js}" defer></script>
+  </body>
+</html>

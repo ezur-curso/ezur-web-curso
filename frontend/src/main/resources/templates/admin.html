@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <link rel="stylesheet" href="/css/output.css" />
+    <title>Panel Administrativo - Ezur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+        @keyframes modal-entra {
+            from { opacity: 0; transform: translateY(8px) scale(0.98); }
+            to   { opacity: 1; transform: none; }
+        }
+        .modal-hoja { animation: modal-entra 0.18s ease-out; }
+        @media (prefers-reduced-motion: reduce) {
+            .modal-hoja { animation: none; }
+        }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex">
+    <aside class="w-64 bg-gray-900 text-gray-300 flex flex-col shrink-0">
+      <div class="flex items-center gap-2 px-6 py-5 border-b border-gray-800">
+         <img src="/img/logo.jpg" alt=" Ezur" class="w-8 h-8 rounded" />
+        <span class="font-sans font-semibold text-white text-sm">Ezur Admin</span>
+      </div>
+
+      <nav class="flex-1 px-3 py-4 space-y-1">
+        <a href="/admin" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-800 text-white text-sm font-medium">Solicitudes</a>
+         <a
+          href="/admin/mensajes"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm"
+          >Mensajes</a
+        >
+        <a href="/admin/testimonios" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm">Testimonios</a>
+        <a href="/admin/usuarios" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm">Usuarios</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm">Configuracion</a>
+      </nav>
+
+      <div class="px-3 py-4 border-t border-gray-800">
+        <form th:action="@{/logout}" method="post">
+  <button type="submit" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 text-sm w-full text-left">
+    Cerrar sesión
+  </button>
+</form>
+      </div>
+    </aside>
+
+    <main class="flex-1">
+    <header class="bg-gray-50 border-b border-gray-200 px-8 py-4 flex items-center justify-between">
+      <h1 class="text-lg font-semibold text-gray-900">Solicitud de Presupuestos</h1>
+      <div class="flex items-center gap-2 text-sm text-gray-600">
+        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-medium">A</div>
+        Admin
+      </div>
+    </header>
+    <div th:if="${eliminado}" class="mb-6 rounded-lg bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+        La solicitud se eliminó correctamente.
+</div>
+    <div class="p-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                <p class="text-2xl font-semibold text-gray-900" th:text="${totalSolicitudes}">24</p>
+                <p class="text-sm text-gray-500">Total solicitudes</p>
+            </div>
+
+              <div class="bg-yellow-50 rounded-xl border border-gray-200 p-5" >
+                <p class="text-2xl font-semibold text-yellow-600" th:text="${totalPendientes}">8</p>
+                <p class="text-sm text-gray-500">Pendientes</p>
+            </div>
+
+              <div class="bg-blue-50 rounded-xl border border-gray-200 p-5">
+                <p class="text-2xl font-semibold text-blue-600" th:text="${totalContactados}">10</p>
+                <p class="text-sm text-gray-500">Contactadas</p>
+            </div>
+
+              <div class="bg-green-50 rounded-xl border border-gray-200 p-5">
+                <p class="text-2xl font-semibold text-green-600" th:text="${totalConfirmados}">6</p>
+                <p class="text-sm text-gray-500">Confirmadas</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50 text-gray-500 text-xs uppercase text-left">
+                    <tr>
+                        <th class="px-6 py-3 font-medium">Cliente</th>
+                        <th class="px-6 py-3 font-medium">Tipo de mudanza</th>
+                        <th class="px-6 py-3 font-medium">Fecha solicitada</th>
+                        <th class="px-6 py-3 font-medium">Estado</th>
+                        <th class="px-6 py-3 font-medium">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr th:each="p : ${presupuestos}" class="hover:bg-gray-50">
+                        <td class="px-6 py-4">
+                            <p class="font-medium text-gray-900" th:text="${p.nombreCompleto}">Nombre</p>
+                            <p class="text-gray-500 text-xs" th:text="${p.email}">correo@ezur.example</p>
+                        </td>
+                        <td class="px-6 py-4 text-gray-600" th:text="${p.tipoMudanza}">Tipo</td>
+                        <td class="px-6 py-4 text-gray-600" th:text="${#temporals.format(p.fechaCreacion, 'dd MMM, yyyy')}">Fecha</td>
+                        <td class="px-6 py-4"><span class="text-xs font-medium px-3 py-1 rounded-full" th:classappend="${p.estado.name() == 'PENDIENTE'} ? 'bg-yellow-50 text-yellow-700' : (${p.estado.name() == 'CONFIRMADO'} ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700')" th:text="${p.estado}">Estado</span></td>                  
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-4">
+                                    <button th:onclick="'abrirModal(' + ${p.id} + ')'" class="text-indigo-600 hover:text-indigo-700 text-xs font-medium">Ver detalle</button>
+                                <form th:action="@{/admin/presupuestos/{id}/eliminar(id=${p.id})}" method="post" th:attr="data-nombre=${p.nombreCompleto}" class="form-eliminar">
+                                    <button type="submit" class="text-red-600 hover:text-red-700 text-xs font-medium">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>        
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </main>
+    </div>
+
+    <div id="modal-detalle" class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/40 p-4" role="dialog" aria-modal="true" aria-labelledby="modal-nombre">
+        <div class="modal-hoja max-h-[92vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white shadow-2xl ring-1 ring-black/5">
+
+            <div class="flex items-start justify-between gap-4 px-7 pt-7">
+                <div class="min-w-0">
+                    <span id="modal-estado" class="inline-block rounded-full px-3 py-1 text-xs font-medium"></span>
+                    <h3 id="modal-nombre" class="mt-3 break-words text-2xl font-semibold leading-tight text-gray-900"></h3>
+                    <div class="mt-2 space-y-0.5 text-sm">
+                        <a id="modal-email" href="#" class="block break-all text-indigo-600 hover:underline"></a>
+                        <a id="modal-telefono" href="#" class="block text-gray-600 hover:underline"></a>
+                    </div>
+                </div>
+                <button onclick="cerrarModal()" aria-label="Cerrar" class="-mr-2 -mt-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg>
+                </button>
+            </div>
+
+            <div class="px-7 pt-7">
+                <ol class="relative ml-2 space-y-6 pl-6">
+                    <li class="relative">
+                        <span class="absolute -left-[26px] top-4 -bottom-7 border-l-2 border-dotted border-gray-300"></span>
+                        <span class="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-gray-900 ring-4 ring-white"></span>
+                        <p class="text-xs text-gray-500">Sale de</p>
+                        <p id="modal-origen" class="mt-0.5 text-base font-medium leading-snug text-gray-900"></p>
+                    </li>
+                    <li class="relative">
+                        <span class="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-gray-900 bg-sky-400 ring-4 ring-white"></span>
+                        <p class="text-xs text-gray-500">Llega a</p>
+                        <p id="modal-destino" class="mt-0.5 text-base font-medium leading-snug text-gray-900"></p>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="mt-7 grid grid-cols-2 gap-4 border-t border-gray-100 px-7 pt-5">
+                <div>
+                    <p class="text-xs text-gray-500">Tipo de mudanza</p>
+                    <p id="modal-tipo" class="mt-0.5 text-sm font-medium text-gray-900"></p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500">Fecha estimada</p>
+                    <p id="modal-fecha" class="mt-0.5 text-sm font-medium text-gray-900"></p>
+                </div>
+            </div>
+
+            <div class="px-7 pt-5">
+                <div class="rounded-xl bg-sky-50 px-4 py-3.5 mb-5">
+                    <p class="text-xs font-medium text-sky-800">Qué se traslada</p>
+                    <p id="modal-comentarios" class="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-gray-800"></p>
+                </div>
+            </div>
+
+            <div id="modal-acciones" class="mt-7 flex flex-wrap gap-3 border-t border-gray-100 px-7 py-5">
+                <button id="btn-contactado" onclick="marcarEstado('CONTACTADO')" class="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 transition hover:bg-gray-50">Marcar como contactado</button>
+                <button id="btn-confirmar" onclick="marcarEstado('CONFIRMADO')" class="flex-1 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700">Confirmar presupuesto</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        let idPresupuestoActual = null;
+
+        const ESTILO_ESTADO = {
+            PENDIENTE:  { texto: "Pendiente",  clases: "bg-yellow-50 text-yellow-700" },
+            CONTACTADO: { texto: "Contactado", clases: "bg-blue-50 text-blue-700" },
+            CONFIRMADO: { texto: "Confirmado", clases: "bg-green-50 text-green-700" }
+        };
+
+        function formatearFecha(texto) {
+            if (!texto) return "Sin fecha";
+            const [anio, mes, dia] = texto.split("-").map(Number);
+            return new Date(anio, mes - 1, dia).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
+        }
+
+        async function abrirModal(id) {
+            idPresupuestoActual = id;
+
+            const response = await fetch(`/admin/presupuestos/${id}`);
+            const p = await response.json();
+
+            const estado = ESTILO_ESTADO[p.estado] ?? ESTILO_ESTADO.PENDIENTE;
+            const chip = document.getElementById("modal-estado");
+            chip.textContent = estado.texto;
+            chip.className = "inline-block rounded-full px-3 py-1 text-xs font-medium " + estado.clases;
+
+            document.getElementById("modal-nombre").textContent = p.nombreCompleto;
+
+            const email = document.getElementById("modal-email");
+            email.textContent = p.email;
+            email.href = "mailto:" + p.email;
+
+            const telefono = document.getElementById("modal-telefono");
+            telefono.textContent = p.telefono ?? "Sin teléfono";
+            telefono.href = p.telefono ? "tel:" + p.telefono.replace(/[^\d+]/g, "") : "#";
+
+            document.getElementById("modal-tipo").textContent = p.tipoMudanza;
+            document.getElementById("modal-fecha").textContent = formatearFecha(p.fechaEstimada);
+            document.getElementById("modal-origen").textContent = p.direccionOrigen;
+            document.getElementById("modal-destino").textContent = p.direccionDestino;
+            document.getElementById("modal-comentarios").textContent = p.comentarios || "Sin comentarios adicionales";
+
+            document.getElementById("btn-contactado").classList.toggle("hidden", p.estado !== "PENDIENTE");
+            document.getElementById("btn-confirmar").classList.toggle("hidden", p.estado === "CONFIRMADO");
+            document.getElementById("modal-acciones").classList.toggle("hidden", p.estado === "CONFIRMADO");
+
+            const modal = document.getElementById("modal-detalle");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById("modal-detalle");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") cerrarModal();
+        });
+
+        document.getElementById("modal-detalle").addEventListener("click", function (e) {
+            if (e.target.id === "modal-detalle") cerrarModal();
+        });
+
+        const csrToken = document.querySelector('meta[name="_csrf"]').getAttribute("content");
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute("content");
+
+        async function marcarEstado(nuevoEstado) {
+            const response = await fetch( `/admin/presupuestos/${idPresupuestoActual}/estado?estado=${nuevoEstado}`,
+      { method: "PATCH" , headers: {[csrfHeader]: csrToken}});
+
+            if (response.ok){
+                location.reload();
+            } else {
+                alert ("No se puede actualizar el estado. Intenta de nuevo");
+            }
+        }
+
+        document.querySelectorAll(".form-eliminar").forEach(function (form) {
+            form.addEventListener("submit", function (e) {
+            const nombre = form.dataset.nombre;
+                if (!confirm("¿Eliminar la solicitud de " + nombre + "? Esta acción no se puede deshacer.")) {
+                 e.preventDefault();
+                }
+            });
+        });
+
+    </script>
+  </body>
+</html>

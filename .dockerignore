@@ -1,0 +1,6 @@
+.git
+.vscode
+.metals
+.env
+target
+node_modules

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <th:block th:replace="~{fragments/layout :: cabecera('Algo salió mal · Ezur', 'Tuvimos un problema técnico. Inténtalo de nuevo en unos minutos.')}"></th:block>
+    <link rel="stylesheet" href="/css/output.css" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" href="/css/ezur.css" th:href="@{/css/ezur.css}" />
+  </head>
+
+  <body>
+    <header th:replace="~{fragments/layout :: nav('')}"></header>
+
+    <main class="seccion error-pagina">
+      <div class="contenedor text-center">
+        <!-- La furgoneta llega al final de una ruta cortada -->
+        <div class="error-escena" aria-hidden="true">
+          <svg viewBox="0 0 640 150" focusable="false">
+            <line x1="20" y1="118" x2="440" y2="118" stroke="#c3cfe2" stroke-width="4" stroke-dasharray="14 12" />
+            <g class="error-cartel">
+              <line x1="520" y1="118" x2="520" y2="52" stroke="#0d2240" stroke-width="4" />
+              <rect x="484" y="22" width="72" height="40" rx="6" fill="#1a67d1" />
+              <text x="520" y="49" text-anchor="middle" fill="#fff" font-size="20" font-weight="800">500</text>
+            </g>
+            <g class="error-furgo">
+              <rect x="0" y="70" width="78" height="44" rx="5" fill="#1a67d1" stroke="#0d2240" stroke-width="3" />
+              <path d="M78 84h24c5 0 8 2 11 6l9 13v11H78z" fill="#fff" stroke="#0d2240" stroke-width="3" stroke-linejoin="round" />
+              <circle cx="22" cy="118" r="10" fill="#0d2240" /><circle cx="100" cy="118" r="10" fill="#0d2240" />
+            </g>
+          </svg>
+        </div>
+        <h1 class="mx-auto max-w-2xl" style="font-size: clamp(2.2rem, 5vw, 3.6rem)">Parada técnica en el camino</h1>
+        <p class="mx-auto mt-4 max-w-lg text-lg gris">Tenemos un problema de nuestro lado. Inténtalo de nuevo en unos minutos.</p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <a th:href="@{/}" class="boton">Volver al inicio <span class="flecha" aria-hidden="true">→</span></a>
+          <a th:href="@{/contacto}" class="boton boton-claro">Avisarnos</a>
+        </div>
+      </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: pie}"></footer>
+    <th:block th:replace="~{fragments/layout :: menuJs}"></th:block>
+  </body>
+</html>
