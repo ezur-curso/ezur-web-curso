@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ezur-db-data:/var/lib/postgresql/data
+      - database-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -51,4 +51,4 @@ services:
       - "8080:8080"
 
 volumes:
-  ezur-db-data:
+  database-data:
