@@ -1,48 +1,54 @@
+name: ezur
 # Ejemplo para levantar las tres capas juntas:  docker compose up --build
 # Las variables se leen del archivo .env de esta carpeta (ver .env.example).
 services:
-  db:
+  database:
     image: postgres:16
+    container_name: ezur-database
     environment:
-      POSTGRES_DB: ezur_db
-      POSTGRES_USER: ezur
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?define DB_PASSWORD en .env}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ezur_pgdata:/var/lib/postgresql/data
+      - ezur-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ezur -d ezur_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 10
 
   # Capa 2: API REST (Spring Boot). Solo la alcanza el frontend, por eso no publica ningún puerto.
   backend:
+    container_name: ezur-backend
     build: ./backend
     depends_on:
-      db:
+      database:
         condition: service_healthy
     environment:
-      DB_URL: jdbc:postgresql://db:5432/ezur_db
-      DB_USERNAME: ezur
-      DB_PASSWORD: ${DB_PASSWORD}
-      JWT_SECRETO: ${JWT_SECRETO:?define JWT_SECRETO en .env (mínimo 32 caracteres)}
-      MAIL_USERNAME: ${MAIL_USERNAME:-}
-      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
-      MAIL_DESTINO: ${MAIL_DESTINO:-}
-      APP_BASE_URL: http://localhost:8080
+      DB_URL: jdbc:postgresql://database:5432/${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRETO: ${JWT_SECRET}
+      EZUR_ADMIN_USERNAME: ${EZUR_ADMIN_USERNAME}
+      EZUR_ADMIN_PASSWORD: ${EZUR_ADMIN_PASSWORD}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_DESTINO: ${MAIL_TO}
+      APP_BASE_URL: ${APP_BASE_URL}
     expose:
       - "8081"
 
   # Capa 1: sitio público (Spring Boot + Thymeleaf) que consume la API
   frontend:
+    container_name: ezur-frontend
     build: ./frontend
     depends_on:
       - backend
     environment:
       API_URL: http://backend:8081
-      APP_BASE_URL: http://localhost:8080
+      APP_BASE_URL: ${APP_BASE_URL}
     ports:
       - "8080:8080"
 
 volumes:
-  ezur_pgdata:
+  ezur-db-data:
