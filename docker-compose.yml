@@ -11,11 +11,13 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - database-data:/var/lib/postgresql/data
+    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 3s
+      interval: 10s
+      timeout: 5s
       retries: 10
+      start_period: 15s
 
   # Capa 2: API REST (Spring Boot). Solo la alcanza el frontend, por eso no publica ningún puerto.
   backend:
@@ -37,18 +39,33 @@ services:
       APP_BASE_URL: ${APP_BASE_URL}
     expose:
       - "8081"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8081/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
 
   # Capa 1: sitio público (Spring Boot + Thymeleaf) que consume la API
   frontend:
     container_name: ezur-frontend
     build: ./frontend
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     environment:
       API_URL: http://backend:8081
       APP_BASE_URL: ${APP_BASE_URL}
     ports:
       - "8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
 
 volumes:
   database-data:
