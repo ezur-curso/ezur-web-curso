@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ezur-backend
+  namespace: ezur
+spec:
+  template:
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-worker2
+      containers:
+        - name: backend
+          env:
+            - name: APP_BASE_URL
+              value: "http://192.168.237.130:30080"
