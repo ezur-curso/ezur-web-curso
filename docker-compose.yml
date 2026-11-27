@@ -1,6 +1,5 @@
 name: ezur
-# Ejemplo para levantar las tres capas juntas:  docker compose up --build
-# Las variables se leen del archivo .env de esta carpeta (ver .env.example).
+
 services:
   database:
     image: postgres:16
@@ -19,10 +18,10 @@ services:
       retries: 10
       start_period: 15s
 
-  # Capa 2: API REST (Spring Boot). Solo la alcanza el frontend, por eso no publica ningún puerto.
+  # Capa 2: API REST (Spring Boot). Solo la alcanza el frontend.
   backend:
+    image: ghcr.io/ezur-curso/ezur-web-curso/backend:latest
     container_name: ezur-backend
-    build: ./backend
     depends_on:
       database:
         condition: service_healthy
@@ -47,10 +46,10 @@ services:
       retries: 5
       start_period: 90s
 
-  # Capa 1: sitio público (Spring Boot + Thymeleaf) que consume la API
+  # Capa 1: sitio público (Spring Boot + Thymeleaf) que consume la API.
   frontend:
+    image: ghcr.io/ezur-curso/ezur-web-curso/frontend:latest
     container_name: ezur-frontend
-    build: ./frontend
     depends_on:
       backend:
         condition: service_healthy
