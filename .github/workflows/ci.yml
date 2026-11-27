@@ -1,4 +1,4 @@
-name: EZUR - CI
+name: EZUR - CI/CD
 
 on:
   push:
@@ -16,6 +16,7 @@ permissions:
   contents: read
 
 jobs:
+  # 1. Compilar y ejecutar pruebas de ambos módulos
   build-and-test:
     name: Build and test - ${{ matrix.module }}
     runs-on: ubuntu-latest
@@ -46,3 +47,73 @@ jobs:
       - name: Build and run tests
         working-directory: ${{ matrix.module }}
         run: ./mvnw -B -ntp verify
+
+  # 2. Construir y publicar imágenes únicamente desde main
+  build-and-publish:
+    name: Build and publish Docker images
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Imagen del frontend
+      - name: Extract frontend image metadata
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/frontend
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=latest
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+      # Imagen del backend
+      - name: Extract backend image metadata
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/backend
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=latest
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
