@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ezur-frontend
+  namespace: ezur
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ezur-frontend
+  template:
+    metadata:
+      labels:
+        app: ezur-frontend
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-worker2
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: frontend
+          image: ghcr.io/ezur-curso/ezur-web-curso/frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: API_URL
+              value: "http://ezur-backend:8081"
+            - name: APP_BASE_URL
+              value: "http://192.168.237.130:30080"
+            # Solo para la prueba local por HTTP.
+            # En el despliegue HTTPS de Azure debe volver a true.
+            - name: SERVER_SERVLET_SESSION_COOKIE_SECURE
+              value: "false"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 750m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ezur-frontend
+  namespace: ezur
+spec:
+  type: NodePort
+  selector:
+    app: ezur-frontend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+      protocol: TCP

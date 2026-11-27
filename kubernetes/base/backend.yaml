@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ezur-backend
+  namespace: ezur
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ezur-backend
+  template:
+    metadata:
+      labels:
+        app: ezur-backend
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: backend
+          image: ghcr.io/ezur-curso/ezur-web-curso/backend:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: DB_URL
+              value: jdbc:postgresql://ezur-database:5432/ezur_db
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ezur-db-secret
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ezur-db-secret
+                  key: POSTGRES_PASSWORD
+          envFrom:
+            - secretRef:
+                name: ezur-backend-secret
+          resources:
+            requests:
+              cpu: 250m
+              memory: 384Mi
+            limits:
+              cpu: "1"
+              memory: 768Mi
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 90
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ezur-backend
+  namespace: ezur
+spec:
+  type: ClusterIP
+  selector:
+    app: ezur-backend
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+      protocol: TCP
