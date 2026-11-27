@@ -21,6 +21,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -31,6 +32,7 @@ import com.ezur.ezur_web.model.Presupuesto;
 import com.ezur.ezur_web.model.Usuario;
 import com.ezur.ezur_web.repository.PresupuestoRepository;
 import com.ezur.ezur_web.repository.UsuarioRepository;
+import com.ezur.ezur_web.service.EmailService;
 import com.jayway.jsonpath.JsonPath;
 
 import dev.samstevens.totp.code.DefaultCodeGenerator;
@@ -54,6 +56,9 @@ class ApiTests {
 
     @Autowired
     private PasswordEncoder encoder;
+
+    @MockitoBean
+    private EmailService emailService;
 
     private static final AtomicInteger contador = new AtomicInteger(1);
 
